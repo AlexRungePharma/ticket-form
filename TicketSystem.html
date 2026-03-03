@@ -1,0 +1,2114 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Runge Pharma | IT Service Desk</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --g:#7aa290;--gd:#5d8a78;--gl:#e8f0ed;
+  --or:#fccb8d;--tl:#89ccca;--ac:#cfe09b;
+  --sb:#2f3e46;--sbh:#3d5260;--sba:#7aa290;
+  --tx:#1a2e35;--mu:#64748b;--bd:#e2e8f0;
+  --bg:#f4f7f6;--wh:#ffffff;
+  --r:10px;--sh:0 2px 8px rgba(0,0,0,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);overflow:hidden}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-thumb{background:#c8d6d0;border-radius:4px}
+.app{display:flex;height:100vh}
+
+/* SIDEBAR */
+.sb{width:240px;min-width:240px;background:var(--sb);display:flex;flex-direction:column;height:100vh;overflow-y:auto;overflow-x:hidden}
+.sb-logo{padding:20px 16px 18px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:12px;cursor:pointer;transition:opacity .15s;}
+.sb-logo:hover{opacity:.85}
+.sb-logo img{height:42px;object-fit:contain;max-width:50px;}
+.sb-logo-txt{display:flex;flex-direction:column;gap:1px;}
+.sb-logo-txt h1{color:#fff;font-size:16px;font-weight:700;font-family:'Syne',sans-serif;line-height:1.1;letter-spacing:0.02em;}
+.sb-logo-txt p{color:#8ba3b5;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
+.sb-sec{padding:12px 8px 2px}
+.sb-sec-lbl{color:rgba(255,255,255,.28);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:0 10px 6px}
+.ni{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;cursor:pointer;color:rgba(255,255,255,.58);font-size:13px;font-weight:500;transition:all .13s;margin-bottom:2px;user-select:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ni:hover{background:var(--sbh);color:#fff}
+.ni.act{background:var(--sba);color:#fff}
+.ni-badge{margin-left:auto;background:rgba(255,255,255,.2);color:#fff;font-size:10px;padding:1px 6px;border-radius:20px;font-weight:700;flex-shrink:0}
+.ni.act .ni-badge{background:rgba(0,0,0,.2)}
+.ni-row{position:relative;display:flex;align-items:center}
+.ni-row .ni{flex:1;padding-right:30px}
+.ni-sort{position:absolute;right:2px;top:50%;transform:translateY(-50%);display:none;flex-direction:column;gap:1px;z-index:5}
+.ni-row:hover .ni-sort{display:flex}
+.ni-sarr{background:rgba(255,255,255,.12);border:none;color:rgba(255,255,255,.55);cursor:pointer;width:18px;height:14px;border-radius:3px;font-size:9px;display:flex;align-items:center;justify-content:center;line-height:1;transition:all .12s}
+.ni-sarr:hover{background:rgba(255,255,255,.28);color:#fff}
+.sb-foot{margin-top:auto;padding:10px 8px;border-top:1px solid rgba(255,255,255,.08)}
+.av{width:28px;height:28px;border-radius:50%;background:var(--g);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:11px;flex-shrink:0}
+.user-row{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:8px;cursor:pointer}
+.user-row:hover{background:var(--sbh)}
+.u-name{color:#fff;font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:150px}
+.u-sub{color:rgba(255,255,255,.32);font-size:10.5px}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{height:56px;background:var(--wh);border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 22px;gap:12px;flex-shrink:0}
+.tb-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--tx)}
+.tb-right{margin-left:auto;display:flex;gap:8px;align-items:center}
+.content{flex:1;overflow-y:auto;padding:22px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border-radius:8px;font-size:13px;font-weight:600;border:none;cursor:pointer;transition:all .13s;font-family:inherit;white-space:nowrap}
+.btn:hover:not(:disabled){filter:brightness(.95);transform:translateY(-1px)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-p{background:var(--g);color:#fff}
+.btn-o{background:transparent;border:1.5px solid var(--bd);color:var(--tx)}
+.btn-o:hover:not(:disabled){background:var(--bg);filter:none}
+.btn-ghost{background:transparent;color:var(--mu);border:none}
+.btn-ghost:hover:not(:disabled){background:var(--bg);filter:none;transform:none}
+.btn-sm{padding:5px 11px;font-size:12px}
+.btn-d{background:#fee2e2;color:#dc2626;border:1.5px solid #fca5a5}
+.btn-d:hover:not(:disabled){background:#fecaca;filter:none}
+
+/* FORM */
+.fw{max-width:680px;margin:0 auto}
+.fsec{background:var(--wh);border:1px solid var(--bd);border-radius:var(--r);padding:22px;margin-bottom:14px}
+.fstitle{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--g);margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid var(--bd)}
+.ig{margin-bottom:16px}
+.ig:last-child{margin-bottom:0}
+.lbl{display:block;font-size:12.5px;font-weight:600;color:var(--tx);margin-bottom:7px}
+.req{color:#ef4444;margin-left:2px}
+.inp{width:100%;padding:9px 13px;border:1.5px solid var(--bd);border-radius:8px;font-family:inherit;font-size:13.5px;background:var(--wh);color:var(--tx);transition:border-color .13s;outline:none}
+.inp:focus{border-color:var(--g)}
+textarea.inp{min-height:90px;resize:vertical}
+select.inp{cursor:pointer}
+.rg,.cg{display:flex;flex-direction:column;gap:6px}
+.rw,.cw{display:flex;align-items:center;gap:9px;cursor:pointer;padding:7px 11px;border-radius:8px;border:1.5px solid var(--bd);transition:all .13s;font-size:13.5px}
+.rw:hover,.cw:hover{border-color:var(--g);background:var(--gl)}
+.rw.sel,.cw.sel{border-color:var(--g);background:var(--gl);font-weight:500}
+.rw input,.cw input{accent-color:var(--g);width:15px;height:15px;flex-shrink:0}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+/* PASTE ZONE */
+.pzone{border:2px dashed var(--bd);border-radius:10px;padding:22px;text-align:center;color:var(--mu);font-size:13px;transition:all .13s;background:var(--bg);cursor:pointer}
+.pzone.has{border-color:var(--g);background:var(--gl)}
+.thumbs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px}
+.tw{position:relative}
+.th{width:76px;height:76px;object-fit:cover;border-radius:6px;border:1px solid var(--bd)}
+.trm{position:absolute;top:-5px;right:-5px;width:17px;height:17px;border-radius:50%;background:#ef4444;color:#fff;border:none;cursor:pointer;font-size:9px;display:flex;align-items:center;justify-content:center}
+.addth{width:76px;height:76px;border:2px dashed var(--bd);border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--mu);font-size:22px;transition:all .13s}
+.addth:hover{border-color:var(--g);color:var(--g)}
+
+/* BADGES */
+.sbadge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.sdot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
+.pbadge{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:6px;font-size:11px;font-weight:600;white-space:nowrap;border:1px solid;}
+
+/* TABLE */
+.tw-wrap{overflow-x:auto;border-radius:var(--r);border:1px solid var(--bd);background:var(--wh)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{background:var(--bg);padding:9px 13px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mu);border-bottom:1px solid var(--bd);white-space:nowrap;position:sticky;top:0;z-index:2;transition:background .1s;cursor:pointer;user-select:none;}
+thead th:hover{background:#e2e8f0;color:var(--tx);}
+thead th.drag-over{background:var(--gl); border-left:2px solid var(--g);}
+.sort-ic{display:inline-block;margin-left:4px;color:var(--g);font-size:12px;}
+tbody tr{border-bottom:1px solid var(--bd);cursor:pointer;transition:background .1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:#f8faf9}
+tbody td{padding:10px 13px;vertical-align:middle;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tnr{font-family:'DM Mono',monospace;font-size:11px;color:var(--mu)}
+.tcell-title{font-weight:500; display:flex; flex-direction:column; gap:3px;}
+.assign-wrap{display:flex;flex-wrap:wrap;gap:4px;}
+.assign-chip{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;color:var(--tx);background:#f1f5f9;padding:2px 7px 2px 2px;border-radius:20px;border:1px solid #e2e8f0;}
+.assign-av{width:18px;height:18px;border-radius:50%;background:var(--g);color:#fff;font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.unassigned{color:var(--mu);font-size:12px;font-style:italic}
+
+/* SEARCH + VIEW TOGGLE */
+.vc{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.vtog{display:flex;background:var(--wh);border:1.5px solid var(--bd);border-radius:8px;overflow:hidden}
+.vbtn{padding:6px 12px;border:none;background:transparent;cursor:pointer;color:var(--mu);font-size:13px;transition:all .13s}
+.vbtn.act{background:var(--g);color:#fff}
+.ss{position:relative;flex:1;max-width:260px}
+.ss input{width:100%;padding:7px 13px 7px 32px;border:1.5px solid var(--bd);border-radius:8px;font-family:inherit;font-size:12.5px;background:var(--wh);outline:none;transition:border-color .13s}
+.ss input:focus{border-color:var(--g)}
+.ss-ic{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--mu);font-size:12px;pointer-events:none}
+.rt-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.rt-live{background:#16a34a;box-shadow:0 0 0 3px rgba(22,163,74,.2);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(22,163,74,.18)}50%{box-shadow:0 0 0 6px rgba(22,163,74,.05)}}
+
+/* EMPTY STATE */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;color:var(--mu);text-align:center}
+.eico{font-size:40px;margin-bottom:14px}
+.empty h3{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--tx);margin-bottom:8px}
+.empty p{font-size:13px;line-height:1.6;max-width:400px}
+.success{display:flex;flex-direction:column;align-items:center;padding:60px 20px;text-align:center}
+.success h2{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;margin:14px 0 8px}
+.success p{color:var(--mu);font-size:13.5px;line-height:1.6;max-width:420px;margin-bottom:20px}
+
+/* KANBAN */
+.kb{display:flex;gap:12px;overflow-x:auto;padding-bottom:20px;align-items:flex-start}
+.kbc{min-width:230px;width:230px;flex-shrink:0}
+.kbh{padding:8px 11px;border-radius:8px 8px 0 0;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.kbb{background:var(--bg);border:1px solid var(--bd);border-top:none;border-radius:0 0 8px 8px;padding:7px;min-height:140px;display:flex;flex-direction:column;gap:6px}
+.kbcard{background:var(--wh);border:1px solid var(--bd);border-radius:8px;padding:12px;cursor:pointer;transition:all .13s}
+.kbcard:hover{border-color:var(--g);transform:translateY(-1px);box-shadow:var(--sh)}
+.kbnr{font-family:'DM Mono',monospace;font-size:10px;color:var(--mu);display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.kbtitle{font-size:12.5px;font-weight:600;margin-bottom:6px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.kbname{font-size:11.5px;color:var(--mu)}
+.kb-assign-wrap{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;}
+
+/* DETAIL PANEL */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:100;backdrop-filter:blur(3px)}
+.dp{position:fixed;top:0;right:0;height:100vh;width:72%;max-width:1000px;background:var(--wh);z-index:101;display:flex;flex-direction:column;box-shadow:-6px 0 30px rgba(0,0,0,.15);animation:si .2s ease}
+@keyframes si{from{transform:translateX(100%)}to{transform:translateX(0)}}
+.dph{padding:16px 22px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.dpb{flex:1;overflow:hidden;display:flex;min-height:0}
+.dpl{flex:1;overflow-y:auto;padding:20px 24px;border-right:1px solid var(--bd);min-width:0;display:flex;flex-direction:column}
+.dpr{width:300px;min-width:300px;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px;background:#f8fafc}
+.dpfl{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--mu);margin-bottom:5px}
+.dpfv{font-size:13.5px;color:var(--tx);background:var(--bg);padding:9px 13px;border-radius:8px;white-space:pre-wrap;min-height:34px}
+.dp-sec{font-size:9.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--mu);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.dp-sec::after{content:'';flex:1;height:1px;background:var(--bd)}
+.dp-card{background:var(--wh);border:1px solid var(--bd);border-radius:12px;padding:14px}
+.stlist{display:flex;flex-direction:column;gap:3px}
+.stopt{display:flex;align-items:center;gap:7px;padding:6px 10px;border-radius:8px;cursor:pointer;border:1.5px solid transparent;font-size:12px;font-weight:500;transition:all .12s}
+.stopt:hover{opacity:.8;background:rgba(0,0,0,.03);border-color:currentColor}
+.stopt.act{border-color:currentColor;font-weight:700;box-shadow:0 1px 6px rgba(0,0,0,.08)}
+.ssgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.ssimg{width:100%;border-radius:7px;border:1px solid var(--bd);cursor:pointer;object-fit:cover;aspect-ratio:4/3;transition:all .13s}
+.ssimg:hover{border-color:var(--g);transform:scale(1.02)}
+
+/* ── PHONE CHAT WIDGET ── */
+.phone-chat{
+  position:fixed;
+  right:calc(72% + 24px);
+  top:50%;
+  transform:translateY(-50%);
+  z-index:102;
+  width:420px;
+  height:780px;
+  display:flex;
+  flex-direction:column;
+  animation:phoneIn .3s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes phoneIn{from{opacity:0;transform:translateY(-50%) scale(.85)}to{opacity:1;transform:translateY(-50%) scale(1)}}
+/* Phone frame */
+.ph-frame{
+  width:100%;
+  height:100%;
+  background:#1a2332;
+  border-radius:44px;
+  padding:5px;
+  box-shadow:0 8px 40px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.08),inset 0 1px 0 rgba(255,255,255,.12);
+  display:flex;
+  flex-direction:column;
+}
+/* Notch bar */
+.ph-notch{
+  height:36px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  position:relative;
+}
+.ph-notch-pill{
+  width:110px;height:12px;
+  background:#0d1117;
+  border-radius:20px;
+}
+.ph-notch-time{
+  position:absolute;
+  left:18px;
+  font-size:12px;font-weight:700;
+  color:rgba(255,255,255,.65);
+  font-family:'DM Mono',monospace;
+}
+.ph-notch-icons{
+  position:absolute;
+  right:18px;
+  font-size:11px;
+  color:rgba(255,255,255,.55);
+  display:flex;gap:5px;align-items:center;
+}
+/* Screen */
+.ph-screen{
+  flex:1;
+  background:#0f1923;
+  border-radius:38px;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+/* Chat header inside phone */
+.ph-header{
+  padding:12px 16px 10px;
+  background:rgba(255,255,255,.04);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-shrink:0;
+}
+.ph-avatar{
+  width:38px;height:38px;
+  border-radius:50%;
+  background:var(--g);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:700;color:#fff;
+  flex-shrink:0;
+}
+.ph-title{color:#fff;font-size:14px;font-weight:700;line-height:1.1;}
+.ph-subtitle{color:rgba(255,255,255,.35);font-size:11px;}
+.ph-chat-badge{
+  margin-left:auto;
+  background:var(--g);
+  color:#fff;
+  font-size:10px;font-weight:700;
+  padding:2px 7px;border-radius:10px;
+}
+/* Messages area */
+.ph-messages{
+  flex:1;
+  overflow-y:auto;
+  padding:14px 12px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.ph-messages::-webkit-scrollbar{width:3px}
+.ph-messages::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
+/* Message bubbles */
+.ph-bubble{
+  max-width:82%;
+  padding:9px 13px;
+  border-radius:18px;
+  font-size:13.5px;
+  line-height:1.45;
+  position:relative;
+  word-break:break-word;
+}
+.ph-bubble.me{
+  background:var(--g);
+  color:#fff;
+  align-self:flex-end;
+  border-bottom-right-radius:4px;
+}
+.ph-bubble.other{
+  background:rgba(255,255,255,.09);
+  color:rgba(255,255,255,.9);
+  align-self:flex-start;
+  border-bottom-left-radius:4px;
+}
+.ph-bubble-author{
+  font-size:11px;
+  font-weight:700;
+  opacity:.75;
+  margin-bottom:3px;
+}
+.ph-bubble.me .ph-bubble-author{text-align:right;}
+.ph-bubble-time{
+  font-size:10.5px;
+  opacity:.55;
+  margin-top:4px;
+  text-align:right;
+}
+.ph-bubble-imgs{
+  display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;
+}
+.ph-bubble-imgs a img{
+  max-height:90px;border-radius:8px;object-fit:cover;
+}
+/* Empty state inside phone */
+.ph-empty{
+  flex:1;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  color:rgba(255,255,255,.2);
+  font-size:13px;gap:8px;
+}
+.ph-empty-ico{font-size:34px;opacity:.4;}
+/* Input area */
+.ph-input-area{
+  padding:10px 12px;
+  background:rgba(255,255,255,.03);
+  border-top:1px solid rgba(255,255,255,.06);
+  display:flex;
+  gap:8px;
+  align-items:flex-end;
+  flex-shrink:0;
+}
+.ph-textarea{
+  flex:1;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:22px;
+  padding:9px 14px;
+  color:#fff;
+  font-family:'DM Sans',sans-serif;
+  font-size:13.5px;
+  resize:none;
+  outline:none;
+  min-height:40px;
+  max-height:90px;
+  line-height:1.4;
+  transition:border-color .13s;
+}
+.ph-textarea::placeholder{color:rgba(255,255,255,.25);}
+.ph-textarea:focus{border-color:var(--g);}
+.ph-send-btn{
+  width:40px;height:40px;
+  border-radius:50%;
+  background:var(--g);
+  border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  font-size:14px;
+  transition:all .13s;
+  color:#fff;
+}
+.ph-send-btn:hover:not(:disabled){background:var(--gd);transform:scale(1.08);}
+.ph-send-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.ph-attach-btn{
+  width:34px;height:34px;
+  border-radius:50%;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.1);
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;color:rgba(255,255,255,.5);
+  flex-shrink:0;
+  transition:all .13s;
+}
+.ph-attach-btn:hover{background:rgba(255,255,255,.12);color:rgba(255,255,255,.8);}
+.ph-attach-hint{
+  font-size:10px;color:var(--g);
+  padding:0 10px 6px;text-align:center;
+}
+
+/* AUTOCOMPLETE / MULTI ASSIGNEE */
+.acwrap{position:relative}
+.actags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;}
+.actag{display:inline-flex;align-items:center;gap:5px;background:var(--gl);color:var(--gd);padding:3px 6px 3px 3px;border-radius:20px;font-size:11.5px;font-weight:600;}
+.actag-rm{background:transparent;border:none;color:var(--gd);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;padding:0 2px;border-radius:50%;}
+.actag-rm:hover{background:rgba(0,0,0,.1);}
+.acdrop{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--wh);border:1.5px solid var(--bd);border-radius:9px;z-index:150;box-shadow:var(--sh);overflow:hidden;max-height:220px;overflow-y:auto}
+.acitem{padding:8px 13px;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:8px;transition:background .1s}
+.acitem:hover{background:var(--gl)}
+.acav{width:28px;height:28px;border-radius:50%;background:var(--g);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.ac-display{font-weight:600;font-size:13px}
+.ac-email{font-size:10.5px;color:var(--mu)}
+
+/* MAIL PICK */
+.mpick{position:relative}
+.mpick-drop{position:absolute;bottom:calc(100% + 6px);left:0;right:0;background:var(--wh);border:1.5px solid var(--bd);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.1);z-index:200;overflow:hidden;}
+.mpick-hdr{padding:8px 13px;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mu);background:var(--bg);border-bottom:1px solid var(--bd);}
+.mpick-row{padding:9px 13px;cursor:pointer;font-size:12.5px;transition:background .1s;}
+.mpick-row:hover{background:var(--gl);}
+
+/* EDITABLE FIELD CHIPS */
+.chips{display:flex;flex-wrap:wrap;gap:6px;}
+.chip{display:inline-flex;align-items:center;padding:4px 10px;border-radius:20px;font-size:12px;cursor:pointer;border:1.5px solid var(--bd);transition:all .12s;user-select:none;}
+.chip:hover{border-color:var(--g);}
+
+/* SETTINGS & MITARBEITER */
+.stsec{background:var(--wh);border:1px solid var(--bd);border-radius:var(--r);padding:20px;margin-bottom:14px;max-width:680px}
+.stitle{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--g);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--bd)}
+.mt-tabs{display:flex;gap:4px;margin-bottom:18px;background:var(--bg);padding:4px;border-radius:10px;width:fit-content}
+.mt-tab{padding:7px 16px;border-radius:8px;border:none;background:transparent;cursor:pointer;font-family:inherit;font-size:13px;font-weight:500;color:var(--mu);transition:all .13s;}
+.mt-tab.act{background:var(--wh);color:var(--tx);font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+.emp-table {width:100%;border-collapse:collapse;}
+.emp-table thead th{background:var(--bg);padding:9px 13px;font-size:11px;text-align:left;}
+.emp-table tbody td{padding:10px 13px;vertical-align:middle;border-bottom:1px solid var(--bd);}
+.inline-inp{border:1.5px solid var(--g);border-radius:7px;padding:5px 10px;font-family:inherit;font-size:13px;outline:none;background:var(--wh);}
+.add-row{background:var(--gl);border:1.5px dashed var(--g);border-radius:var(--r);padding:18px;}
+.add-row-title{font-weight:700;font-size:13px;color:var(--gd);margin-bottom:12px;}
+.color-presets{display:flex;flex-wrap:wrap;gap:7px;margin-top:6px;}
+.color-dot{width:28px;height:28px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .12s;border:2px solid transparent;}
+.color-dot:hover{transform:scale(1.15);}
+.color-dot.sel{border-color:#fff;box-shadow:0 0 0 2px #374151;}
+.st-manage-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--bd);border-radius:8px;margin-bottom:6px;background:var(--wh);}
+.st-preview{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;}
+
+/* MODALS */
+.mbg{position:fixed;inset:0;background:rgba(15,23,42,.6);z-index:300;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal{background:var(--wh);border-radius:16px;padding:32px;width:380px;box-shadow:0 24px 64px rgba(0,0,0,.25);animation:modalIn .2s ease}
+@keyframes modalIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.modal h2{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;margin-bottom:5px}
+.modal p{color:var(--mu);font-size:13px;margin-bottom:20px;line-height:1.55}
+.alert{padding:9px 13px;border-radius:8px;font-size:12.5px;margin-bottom:12px}
+.alert-e{background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;}
+.alert-s{background:#f0fdf4;color:#16a34a;border:1px solid #86efac;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState, useEffect, useRef, useCallback, useContext, createContext} = React;
+
+// ══════════════════════════════════════════════
+// SUPABASE
+// ══════════════════════════════════════════════
+const SB_URL = 'https://kdbwpftahhkufzynmifd.supabase.co';
+const SB_KEY = 'sb_publishable_figCNfCQKXOVpPWXgAuMJA_DZ7lTiOq';
+const supabase = window.supabase.createClient(SB_URL, SB_KEY);
+
+// ══════════════════════════════════════════════
+// CONTEXT
+// ══════════════════════════════════════════════
+const AppCtx = createContext({
+  statuses: [], employees: [], user: null,
+  displayName: v => v || '–',
+  scFn: () => ({c:'#6b7280', bg:'#f9fafb'}),
+  isAdmin: false, reloadEmployees: () => {}, reloadStatuses: () => {},
+});
+
+// ══════════════════════════════════════════════
+// CONSTANTS
+// ══════════════════════════════════════════════
+const PRIORITIES = [
+  {v:'Sehr Hoch',   e:'🔴', c:'#dc2626', bg:'#fef2f2', w:5},
+  {v:'Hoch',        e:'🟠', c:'#ea580c', bg:'#fff7ed', w:4},
+  {v:'Mittel',      e:'🟡', c:'#d97706', bg:'#fffbeb', w:3},
+  {v:'Gering',      e:'🟢', c:'#16a34a', bg:'#f0fdf4', w:2},
+  {v:'Sehr Gering', e:'🔵', c:'#2563eb', bg:'#eff6ff', w:1}
+];
+
+const INITIAL_STATUSES = [
+  {name:'Offen',                          color:'#dc2626', bg:'#fef2f2', sort_order:1,  is_archived:false},
+  {name:'In Prüfung',                     color:'#2563eb', bg:'#eff6ff', sort_order:2,  is_archived:false},
+  {name:'Vor-Ort-Termin',                 color:'#7c3aed', bg:'#f5f3ff', sort_order:3,  is_archived:false},
+  {name:'Fernwartung geplant',            color:'#4f46e5', bg:'#eef2ff', sort_order:4,  is_archived:false},
+  {name:'Warten auf Rückmeldung',         color:'#d97706', bg:'#fffbeb', sort_order:5,  is_archived:false},
+  {name:'Warten auf Lieferung',           color:'#ea580c', bg:'#fff7ed', sort_order:6,  is_archived:false},
+  {name:'Warten auf Hersteller/Support',  color:'#c2410c', bg:'#fff7ed', sort_order:7,  is_archived:false},
+  {name:'In Testphase',                   color:'#0891b2', bg:'#ecfeff', sort_order:8,  is_archived:false},
+  {name:'Zur Abholung bereit',            color:'#0d9488', bg:'#f0fdfa', sort_order:9,  is_archived:false},
+  {name:'Erledigt / Gelöst',              color:'#16a34a', bg:'#f0fdf4', sort_order:10, is_archived:false},
+  {name:'Abgelehnt',                      color:'#991b1b', bg:'#fef2f2', sort_order:11, is_archived:false},
+  {name:'Nicht reproduzierbar',           color:'#6b7280', bg:'#f9fafb', sort_order:12, is_archived:false},
+];
+
+const COLOR_PRESETS = [
+  {label:'Rot',    c:'#dc2626', bg:'#fef2f2'},
+  {label:'Orange', c:'#ea580c', bg:'#fff7ed'},
+  {label:'Gelb',   c:'#d97706', bg:'#fffbeb'},
+  {label:'Grün',   c:'#16a34a', bg:'#f0fdf4'},
+  {label:'Teal',   c:'#0d9488', bg:'#f0fdfa'},
+  {label:'Cyan',   c:'#0891b2', bg:'#ecfeff'},
+  {label:'Blau',   c:'#2563eb', bg:'#eff6ff'},
+  {label:'Indigo', c:'#4f46e5', bg:'#eef2ff'},
+  {label:'Lila',   c:'#7c3aed', bg:'#f5f3ff'},
+  {label:'Pink',   c:'#db2777', bg:'#fdf2f8'},
+  {label:'Grau',   c:'#6b7280', bg:'#f9fafb'},
+  {label:'Dunkel', c:'#374151', bg:'#f3f4f6'},
+];
+
+const CATS     = ['Hardware','Software','Netzwerk / Internet','Drucker / Scanner','Telefon / Headset','E-Mail / Outlook','Benutzer / Passwort','Sonstiges'];
+const DEVS     = ['Laptop','Bildschirm','2 Bildschirme','Maus','Tastatur','Headset','Kamera','Kompletter Arbeitsplatz','Sonstiges'];
+const PURPOSES = ['Im Haus','Außendienst','Home Office','Sonstiges'];
+const REQS     = ['Verbesserungsvorschlag','Neue Software / Tool','Hardwarewunsch','Prozessänderung','Beschwerde','Sonstiges'];
+const AFFECTED = ['Nur ich','Meine Abteilung','Mehrere Abteilungen','Ganzes Unternehmen'];
+const SINCE    = ['Heute','Seit gestern','Seit einigen Tagen','Seit einer Woche','Schon länger'];
+
+const MAIL_TPLS = [
+  {l:'Eingang bestätigt',          b:'Ihr Ticket wurde erfasst und wird schnellstmöglich bearbeitet. Wir melden uns bei Ihnen.'},
+  {l:'Rückfrage',                   b:'Für die weitere Bearbeitung benötigen wir noch folgende Informationen:\n\n[Bitte hier ergänzen]\n\nBitte antworten Sie auf diese E-Mail.'},
+  {l:'Termin vereinbaren',          b:'Für die Lösung Ihres Anliegens möchten wir gerne einen Termin mit Ihnen vereinbaren.\n\nBitte teilen Sie uns Ihre verfügbaren Zeiten mit.'},
+  {l:'Problem gelöst',              b:'Wir freuen uns Ihnen mitteilen zu können, dass Ihr Anliegen erfolgreich bearbeitet wurde.\n\nBitte geben Sie uns kurz Bescheid, falls das Problem weiterhin besteht.'},
+  {l:'Warten auf Lieferung',        b:'Für die Lösung Ihres Anliegens wurde ein Teil bestellt. Wir melden uns sobald dieser eingetroffen ist.'},
+  {l:'Weiterleitung an Hersteller', b:'Ihr Anliegen wurde an den Hersteller weitergeleitet. Sobald wir eine Rückmeldung erhalten, informieren wir Sie umgehend.'},
+];
+
+// ══════════════════════════════════════════════
+// VIEWS
+// ══════════════════════════════════════════════
+const ARCHIVE_STATUSES = ['Erledigt / Gelöst', 'Abgelehnt', 'Nicht reproduzierbar'];
+const isArchived = (t) => ARCHIVE_STATUSES.includes(t['Status']);
+
+const VIEWS = {
+  open:      {label:'🎫 Offene Tickets',     filter:(t)=>t['Status']==='Offen'},
+  stoerung:  {label:'🔧 Technische Störung', filter:(t)=>{const a=(t['Ticket-Art']||'').toLowerCase().trim();return (a.includes('störung')||a.includes('storung')||a.includes('technische'))&&!isArchived(t);}},
+  geraet:    {label:'💻 Gerät / Ausleihe',   filter:(t)=>{const a=(t['Ticket-Art']||'').toLowerCase().trim();return (a.includes('gerät')||a.includes('gerat')||a.includes('ausleihe')||a.includes('ausleihen'))&&!isArchived(t);}},
+  aenderung: {label:'💡 Änderung / Anfrage', filter:(t)=>{const a=(t['Ticket-Art']||'').toLowerCase().trim();return (a.includes('änderung')||a.includes('anderung')||a.includes('anfrage')||a.includes('wunsch'))&&!isArchived(t);}},
+  mine:      {label:'👤 Meine Tickets',       filter:(t,u,emps)=>{
+    if(!u||isArchived(t))return false;
+    const val=t['Zugewiesen an']||'';
+    const assignees=val.split(',').map(e=>e.trim().toLowerCase()).filter(Boolean);
+    if(assignees.includes(u.email.toLowerCase()))return true;
+    const myDisp=emps.find(e=>e.email.toLowerCase()===u.email.toLowerCase())?.display_name;
+    return myDisp&&assignees.includes(myDisp.toLowerCase());
+  }},
+  all:       {label:'📋 Alle aktiven',       filter:(t)=>!isArchived(t)},
+  archiv:    {label:'🗄️ Archiv',             filter:(t)=>isArchived(t)},
+};
+
+const DEFAULT_VIEW_ORDER = ['open','stoerung','geraet','aenderung','mine','all','archiv'];
+
+const VIEW_COLS = {
+  open:      [{h:'Nr.',k:'Ticket-Nr.',mono:true},{h:'Titel',k:'Titel',cls:'tcell-title',isTitle:true},{h:'Art',k:'Ticket-Art'},{h:'Melder',k:'Name'},{h:'Vor. Abschluss',k:'Voraussichtlicher Abschluss'},{h:'Prio',k:'Priorität',isPrio:true},{h:'Bearbeiter',k:'Zugewiesen an',isAssignee:true},{h:'Status',k:'Status',isSt:true},{h:'Datum',k:'Ticket-Datum'}],
+  stoerung:  [{h:'Nr.',k:'Ticket-Nr.',mono:true},{h:'Titel',k:'Titel',cls:'tcell-title',isTitle:true},{h:'Melder',k:'Name'},{h:'Kategorie',k:'Kategorie'},{h:'Vor. Abschluss',k:'Voraussichtlicher Abschluss'},{h:'Prio',k:'Priorität',isPrio:true},{h:'Bearbeiter',k:'Zugewiesen an',isAssignee:true},{h:'Status',k:'Status',isSt:true}],
+  geraet:    [{h:'Nr.',k:'Ticket-Nr.',mono:true},{h:'Titel',k:'Titel',cls:'tcell-title',isTitle:true},{h:'Melder',k:'Name'},{h:'Gerät',k:'Gerätetyp (Mehrere Antworten möglich)',trunc:30},{h:'Vor. Abschluss',k:'Voraussichtlicher Abschluss'},{h:'Prio',k:'Priorität',isPrio:true},{h:'Bearbeiter',k:'Zugewiesen an',isAssignee:true},{h:'Status',k:'Status',isSt:true}],
+  aenderung: [{h:'Nr.',k:'Ticket-Nr.',mono:true},{h:'Titel',k:'Titel',cls:'tcell-title',isTitle:true},{h:'Melder',k:'Name'},{h:'Art',k:'Art der Anfrage'},{h:'Vor. Abschluss',k:'Voraussichtlicher Abschluss'},{h:'Prio',k:'Priorität',isPrio:true},{h:'Bearbeiter',k:'Zugewiesen an',isAssignee:true},{h:'Status',k:'Status',isSt:true}],
+  mine:      [{h:'Nr.',k:'Ticket-Nr.',mono:true},{h:'Titel',k:'Titel',cls:'tcell-title',isTitle:true},{h:'Art',k:'Ticket-Art'},{h:'Melder',k:'Name'},{h:'Vor. Abschluss',k:'Voraussichtlicher Abschluss'},{h:'Prio',k:'Priorität',isPrio:true},{h:'Bearbeiter',k:'Zugewiesen an',isAssignee:true},{h:'Status',k:'Status',isSt:true},{h:'Datum',k:'Ticket-Datum'}],
+  all:       [{h:'Nr.',k:'Ticket-Nr.',mono:true},{h:'Titel',k:'Titel',cls:'tcell-title',isTitle:true},{h:'Art',k:'Ticket-Art'},{h:'Melder',k:'Name'},{h:'Vor. Abschluss',k:'Voraussichtlicher Abschluss'},{h:'Prio',k:'Priorität',isPrio:true},{h:'Bearbeiter',k:'Zugewiesen an',isAssignee:true},{h:'Status',k:'Status',isSt:true},{h:'Datum',k:'Ticket-Datum'}],
+  archiv:    [{h:'Nr.',k:'Ticket-Nr.',mono:true},{h:'Titel',k:'Titel',cls:'tcell-title',isTitle:true},{h:'Art',k:'Ticket-Art'},{h:'Melder',k:'Name'},{h:'Abgeschlossen am',k:'Voraussichtlicher Abschluss'},{h:'Prio',k:'Priorität',isPrio:true},{h:'Bearbeiter',k:'Zugewiesen an',isAssignee:true},{h:'Status',k:'Status',isSt:true},{h:'Datum',k:'Ticket-Datum'}],
+};
+
+// ══════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════
+const trunc = (s, n) => s && s.length > n ? s.slice(0, n) + '…' : (s || '');
+const getImgs = t => { try { return JSON.parse(t['Anlagen-URLs'] || '[]'); } catch(err) { return []; } };
+const getAttachments = t => { try { return Array.isArray(t.attachments) ? t.attachments : JSON.parse(t.attachments || '[]'); } catch(err) { return []; } };
+const genTicketNr = () => {
+  const d = new Date();
+  return `TK-${d.getFullYear().toString().slice(2)}${String(d.getMonth()+1).padStart(2,'0')}-${String(Math.floor(Math.random()*9000)+1000)}`;
+};
+const getPrioObj = (pVal) => PRIORITIES.find(p=>p.v===pVal) || null;
+
+async function uploadFiles(files) {
+  const urls = [];
+  for (const file of files) {
+    const ext = (file.name || 'png').split('.').pop();
+    const path = `${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+    const {error} = await supabase.storage.from('ticket-files').upload(path, file);
+    if (!error) {
+      const {data} = supabase.storage.from('ticket-files').getPublicUrl(path);
+      urls.push(data.publicUrl);
+    }
+  }
+  return urls;
+}
+
+// ══════════════════════════════════════════════
+// UI COMPONENTS
+// ══════════════════════════════════════════════
+function SBadge({status}) {
+  const {scFn} = useContext(AppCtx);
+  const s = scFn(status || 'Offen');
+  return <span className="sbadge" style={{color:s.c,background:s.bg}}><span className="sdot"/>{status||'Offen'}</span>;
+}
+
+function PBadge({prio}) {
+  const p = getPrioObj(prio);
+  if(!p) return null;
+  return <span className="pbadge" style={{color:p.c,borderColor:p.bg,background:p.bg}}>{p.e} {p.v}</span>;
+}
+
+function AssigneeChip({value}) {
+  const {displayName} = useContext(AppCtx);
+  if (!value) return <span className="unassigned">—</span>;
+  const emails = value.split(',').map(s=>s.trim()).filter(Boolean);
+  if(emails.length===0) return <span className="unassigned">—</span>;
+  return (
+    <div className="assign-wrap">
+      {emails.map((email, i) => {
+        const name = displayName(email);
+        return (
+          <span key={i} className="assign-chip" title={email}>
+            <span className="assign-av">{(name[0]||'?').toUpperCase()}</span>
+            {name}
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
+function MultiAssigneeSelect({value, onChange}) {
+  const {employees, displayName} = useContext(AppCtx);
+  const [query, setQuery] = useState('');
+  const [open, setOpen] = useState(false);
+
+  const vals = (value||'').split(',').map(s=>s.trim()).filter(Boolean);
+
+  const filtered = query.length > 0
+    ? employees.filter(e =>
+        ((e.display_name||'').toLowerCase().includes(query.toLowerCase()) ||
+        e.email.toLowerCase().includes(query.toLowerCase())) &&
+        !vals.includes(e.email) && !vals.includes(e.display_name)
+      )
+    : employees.filter(e => !vals.includes(e.email) && !vals.includes(e.display_name));
+
+  const add = (emp) => {
+    onChange([...vals, emp.email].join(', '));
+    setQuery('');
+    setOpen(false);
+  };
+
+  const remove = (valToRemove, e) => {
+    e.stopPropagation();
+    onChange(vals.filter(v=>v!==valToRemove).join(', '));
+  };
+
+  return (
+    <div className="acwrap">
+      <div className="actags">
+        {vals.map((v,i) => {
+          const name = displayName(v);
+          return (
+            <span key={i} className="actag">
+              <span className="assign-av" style={{width:16,height:16,fontSize:7}}>{(name[0]||'?').toUpperCase()}</span>
+              {name}
+              <button className="actag-rm" onMouseDown={e=>remove(v,e)}>✕</button>
+            </span>
+          );
+        })}
+      </div>
+      <div style={{position:'relative'}}>
+        <input className="inp" style={{fontSize:13}}
+          value={query}
+          placeholder={vals.length>0?"Weitere hinzufügen…":"Mitarbeiter wählen…"}
+          onFocus={() => setOpen(true)}
+          onBlur={() => setTimeout(() => setOpen(false), 180)}
+          onChange={e => { setQuery(e.target.value); setOpen(true); }}
+        />
+      </div>
+      {open && (
+        <div className="acdrop">
+          {filtered.length === 0 && (
+            <div className="acitem" style={{color:'var(--mu)',fontSize:12}}>Keine (weiteren) Mitarbeiter gefunden</div>
+          )}
+          {filtered.map(emp => (
+            <div key={emp.email} className="acitem" onMouseDown={() => add(emp)}>
+              <div className="acav">{(emp.display_name||emp.email)[0].toUpperCase()}</div>
+              <div>
+                <div className="ac-display">{emp.display_name || emp.email}</div>
+                <div className="ac-email">{emp.email}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════
+// MODALS & BUTTONS
+// ══════════════════════════════════════════════
+function LoginModal({onClose}) {
+  const [email,setEmail]=useState(''); const [pw,setPw]=useState('');
+  const [loading,setL]=useState(false); const [err,setErr]=useState('');
+  const login = async () => {
+    if(!email||!pw){setErr('E-Mail und Passwort erforderlich.');return;}
+    setL(true); setErr('');
+    const {error} = await supabase.auth.signInWithPassword({email,password:pw});
+    if (error) { setErr(error.message); setL(false); } else onClose();
+  };
+  return (
+    <div className="mbg" onClick={onClose}>
+      <div className="modal" onClick={e=>e.stopPropagation()}>
+        <h2>🔑 IT-Login</h2>
+        <p>Das Dashboard ist nur für IT-Mitarbeiter.</p>
+        {err && <div className="alert alert-e">{err}</div>}
+        <div className="ig">
+          <label className="lbl">E-Mail</label>
+          <input className="inp" type="email" value={email} onChange={e=>setEmail(e.target.value)}
+            placeholder="it@runge-pharma.de" onKeyDown={e=>e.key==='Enter'&&login()} autoFocus/>
+        </div>
+        <div className="ig" style={{marginBottom:20}}>
+          <label className="lbl">Passwort</label>
+          <input className="inp" type="password" value={pw} onChange={e=>setPw(e.target.value)} onKeyDown={e=>e.key==='Enter'&&login()}/>
+        </div>
+        <button className="btn btn-p" style={{width:'100%',justifyContent:'center'}} onClick={login} disabled={loading}>
+          {loading?'⏳ Anmelden…':'Anmelden'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function PwModal({onClose}) {
+  const [pw,setPw]=useState(''); const [pw2,setPw2]=useState('');
+  const [loading,setL]=useState(false); const [msg,setMsg]=useState('');
+  const save = async () => {
+    if (pw!==pw2) { setMsg('Passwörter stimmen nicht überein.'); return; }
+    if (pw.length<8) { setMsg('Mindestens 8 Zeichen erforderlich.'); return; }
+    setL(true);
+    const {error} = await supabase.auth.updateUser({password:pw});
+    setL(false);
+    if (error) setMsg(error.message);
+    else { setMsg('✅ Passwort geändert!'); setTimeout(onClose,1800); }
+  };
+  return (
+    <div className="mbg" onClick={onClose}>
+      <div className="modal" onClick={e=>e.stopPropagation()}>
+        <h2>🔒 Passwort ändern</h2>
+        {msg && <div className={`alert ${msg.includes('✅')?'alert-s':'alert-e'}`}>{msg}</div>}
+        <div className="ig"><label className="lbl">Neues Passwort</label>
+          <input className="inp" type="password" value={pw} onChange={e=>setPw(e.target.value)}/></div>
+        <div className="ig" style={{marginBottom:20}}><label className="lbl">Wiederholen</label>
+          <input className="inp" type="password" value={pw2} onChange={e=>setPw2(e.target.value)}/></div>
+        <div style={{display:'flex',gap:8}}>
+          <button className="btn btn-p" onClick={save} disabled={loading}>{loading?'…':'Speichern'}</button>
+          <button className="btn btn-o" onClick={onClose}>Abbrechen</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MailButton({ticket}) {
+  const [open,setOpen] = useState(false);
+  const to = ticket['E-Mail']||'';
+  const subject = encodeURIComponent(`[IT-Ticket ${ticket['Ticket-Nr.']}] ${ticket['Titel']||ticket['Ticket-Art']||''}`);
+  const send = tpl => {
+    const body = encodeURIComponent(`Guten Tag ${ticket['Name']||''},\n\n${tpl.b}\n\nMit freundlichen Grüßen\nIT-Team Runge Pharma`);
+    window.open(`mailto:${to}?subject=${subject}&body=${body}`);
+    setOpen(false);
+  };
+  return (
+    <div className="mpick">
+      <button className="btn btn-o btn-sm" style={{width:'100%',justifyContent:'center'}} onClick={()=>setOpen(o=>!o)}>
+        ✉️ Per Outlook beantworten
+      </button>
+      {open && (
+        <div className="mpick-drop">
+          <div className="mpick-hdr">Vorlage wählen</div>
+          {MAIL_TPLS.map(tpl=><div key={tpl.l} className="mpick-row" onClick={()=>send(tpl)}>{tpl.l}</div>)}
+          {!to && <div style={{padding:'8px 13px',fontSize:12,color:'#dc2626',background:'#fef2f2'}}>⚠️ Keine E-Mail hinterlegt</div>}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════
+// EDITABLE FIELD
+// ══════════════════════════════════════════════
+function EF({label, value, type='text', opts, onChange}) {
+  if (type==='select') return (
+    <div className="ig">
+      <div className="dpfl">{label}</div>
+      <select className="inp" value={value||''} onChange={e=>onChange(e.target.value)} style={{fontSize:13}}>
+        <option value="">– wählen –</option>
+        {opts.map(o=><option key={o} value={o}>{o}</option>)}
+      </select>
+    </div>
+  );
+  if (type==='chips') {
+    const vals = (value||'').split(', ').filter(Boolean);
+    const tog = o => {
+      const next = vals.includes(o) ? vals.filter(v=>v!==o) : [...vals,o];
+      onChange(next.join(', '));
+    };
+    return (
+      <div className="ig">
+        <div className="dpfl">{label}</div>
+        <div className="chips">
+          {opts.map(o=>{
+            const sel = vals.includes(o);
+            return <span key={o} className="chip" onClick={()=>tog(o)}
+              style={{borderColor:sel?'var(--g)':'var(--bd)',background:sel?'var(--gl)':'transparent',color:sel?'var(--gd)':'var(--mu)'}}>
+              {sel?'✓ ':''}{o}
+            </span>;
+          })}
+        </div>
+      </div>
+    );
+  }
+  if (type==='date') return (
+    <div className="ig">
+      <div className="dpfl">{label}</div>
+      <input className="inp" type="date" value={value||''} onChange={e=>onChange(e.target.value)} style={{fontSize:13}}/>
+    </div>
+  );
+  if (type==='textarea') return (
+    <div className="ig">
+      <div className="dpfl">{label}</div>
+      <textarea className="inp" value={value||''} onChange={e=>onChange(e.target.value)} style={{fontSize:13}}/>
+    </div>
+  );
+  return (
+    <div className="ig">
+      <div className="dpfl">{label}</div>
+      <input className="inp" value={value||''} onChange={e=>onChange(e.target.value)} style={{fontSize:13}}/>
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════
+// PHONE CHAT WIDGET
+// ══════════════════════════════════════════════
+function PhoneChat({ticketNr, ticketTitle}) {
+  const {user, displayName} = useContext(AppCtx);
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState('');
+  const [commentImgs, setCommentImgs] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const chatEndRef = useRef(null);
+  const fileInputRef = useRef(null);
+
+  // Live time for status bar
+  const [time, setTime] = useState(() => new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}));
+  useEffect(()=>{
+    const iv = setInterval(()=>setTime(new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})),10000);
+    return ()=>clearInterval(iv);
+  },[]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      const {data} = await supabase.from('ticket_comments').select('*')
+        .eq('ticket_nr', ticketNr).order('created_at', {ascending: true});
+      if(data) setComments(data);
+      setTimeout(()=>chatEndRef.current?.scrollIntoView({behavior:'smooth'}), 100);
+    };
+    fetch();
+    // Realtime subscription
+    const ch = supabase.channel('chat-'+ticketNr)
+      .on('postgres_changes',{event:'INSERT',schema:'public',table:'ticket_comments',filter:`ticket_nr=eq.${ticketNr}`},p=>{
+        setComments(prev=>[...prev, p.new]);
+        setTimeout(()=>chatEndRef.current?.scrollIntoView({behavior:'smooth'}), 80);
+      })
+      .subscribe();
+    return ()=>supabase.removeChannel(ch);
+  }, [ticketNr]);
+
+  const post = async () => {
+    if(!newComment.trim() && commentImgs.length === 0) return;
+    setLoading(true);
+    const imgUrls = await uploadFiles(commentImgs);
+    const {data, error} = await supabase.from('ticket_comments').insert({
+      ticket_nr: ticketNr,
+      author_email: user?.email,
+      content: newComment.trim(),
+      attachments: JSON.stringify(imgUrls)
+    }).select().single();
+    setLoading(false);
+    if(!error && data) {
+      setComments(prev=>[...prev, data]);
+      setNewComment('');
+      setCommentImgs([]);
+      setTimeout(()=>chatEndRef.current?.scrollIntoView({behavior:'smooth'}), 100);
+    }
+  };
+
+  const handleKey = e => {
+    if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); post(); }
+  };
+
+  const titleInitial = (ticketTitle||'T')[0].toUpperCase();
+
+  return (
+    <div className="phone-chat">
+      <div className="ph-frame">
+        {/* Notch / Status Bar */}
+        <div className="ph-notch">
+          <span className="ph-notch-time">{time}</span>
+          <div className="ph-notch-pill"/>
+          <div className="ph-notch-icons">
+            <span>●●●</span>
+            <span>WiFi</span>
+            <span>🔋</span>
+          </div>
+        </div>
+
+        {/* Screen */}
+        <div className="ph-screen">
+          {/* Header */}
+          <div className="ph-header">
+            <div className="ph-avatar">{titleInitial}</div>
+            <div>
+              <div className="ph-title">Ticket Chat</div>
+              <div className="ph-subtitle">#{ticketNr}</div>
+            </div>
+            {comments.length > 0 && (
+              <div className="ph-chat-badge">{comments.length}</div>
+            )}
+          </div>
+
+          {/* Messages */}
+          <div className="ph-messages">
+            {comments.length === 0 && (
+              <div className="ph-empty">
+                <div className="ph-empty-ico">💬</div>
+                <span>Noch keine Nachrichten</span>
+              </div>
+            )}
+            {comments.map(c => {
+              const isMe = c.author_email === user?.email;
+              const cImgs = getAttachments(c);
+              const authorName = displayName(c.author_email);
+              const timeStr = new Date(c.created_at).toLocaleString('de-DE',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit'});
+              return (
+                <div key={c.id} className={`ph-bubble ${isMe?'me':'other'}`}>
+                  {!isMe && <div className="ph-bubble-author">{authorName}</div>}
+                  {c.content && <div>{c.content}</div>}
+                  {cImgs.length > 0 && (
+                    <div className="ph-bubble-imgs">
+                      {cImgs.map((img,i)=>(
+                        <a key={i} href={img} target="_blank" rel="noopener noreferrer">
+                          <img src={img} alt="Anhang"/>
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                  <div className="ph-bubble-time">{timeStr}</div>
+                </div>
+              );
+            })}
+            <div ref={chatEndRef}/>
+          </div>
+
+          {/* Attachment hint */}
+          {commentImgs.length > 0 && (
+            <div className="ph-attach-hint">📎 {commentImgs.length} Bild(er) bereit</div>
+          )}
+
+          {/* Input */}
+          {user ? (
+            <div className="ph-input-area">
+              <button className="ph-attach-btn" onClick={()=>fileInputRef.current?.click()} title="Anhang">
+                📎
+                <input ref={fileInputRef} type="file" hidden multiple accept="image/*"
+                  onChange={e=>setCommentImgs(Array.from(e.target.files))}/>
+              </button>
+              <textarea
+                className="ph-textarea"
+                value={newComment}
+                onChange={e=>setNewComment(e.target.value)}
+                onKeyDown={handleKey}
+                placeholder="Nachricht schreiben…"
+                rows={1}
+              />
+              <button className="ph-send-btn" onClick={post} disabled={loading || (!newComment.trim() && commentImgs.length===0)}>
+                {loading ? '…' : '➤'}
+              </button>
+            </div>
+          ) : (
+            <div style={{padding:'10px',textAlign:'center',color:'rgba(255,255,255,.3)',fontSize:11}}>
+              Login erforderlich
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════
+// DETAIL PANEL
+// ══════════════════════════════════════════════
+function DetailPanel({ticket, onClose, onUpdate}) {
+  const {statuses, scFn, user} = useContext(AppCtx);
+  const [e, setE] = useState({
+    'Titel':                                 ticket['Titel']||'',
+    'Status':                                ticket['Status']||'Offen',
+    'Priorität':                             ticket['Priorität']||'',
+    'Zugewiesen an':                         ticket['Zugewiesen an']||'',
+    'Kategorie':                             ticket['Kategorie']||'',
+    'Problembeschreibung':                   ticket['Problembeschreibung']||'',
+    'Seit wann Problem?':                    ticket['Seit wann Problem?']||'',
+    'Wer ist betroffen?':                    ticket['Wer ist betroffen?']||'',
+    'Gerätetyp (Mehrere Antworten möglich)': ticket['Gerätetyp (Mehrere Antworten möglich)']||'',
+    'Zweck der Nutzung':                     ticket['Zweck der Nutzung']||'',
+    '(Von) Zeitraum':                        ticket['(Von) Zeitraum']||'',
+    '(Bis) Zeitraum':                        ticket['(Bis) Zeitraum']||'',
+    'Art der Anfrage':                       ticket['Art der Anfrage']||'',
+    'Beschreibung':                          ticket['Beschreibung']||'',
+    'Voraussichtlicher Abschluss':           ticket['Voraussichtlicher Abschluss']||'',
+  });
+
+  const [saving,setSaving]=useState(false); const [msg,setMsg]=useState('');
+  const imgs = getImgs(ticket);
+  const set  = (k,v) => setE(p=>({...p,[k]:v}));
+
+  const save = async () => {
+    setSaving(true); setMsg('');
+    const {error} = await supabase.from('tickets').update(e).eq('"Ticket-Nr."', ticket['Ticket-Nr.']);
+    setSaving(false);
+    if (error) { setMsg('❌ '+error.message); }
+    else { setMsg('✅ Gespeichert'); setTimeout(()=>setMsg(''),2000); onUpdate({...ticket,...e}); }
+  };
+
+  const art = ticket['Ticket-Art'] || '';
+  const isStoerung = art.includes('Technische Störung');
+  const isGeraet = art.includes('Gerät ausleihen');
+  const isAenderung = art.includes('Änderung / Anfrage');
+
+  return (
+    <>
+      <div className="ov" onClick={onClose}/>
+
+      {/* Phone Chat Widget — over blur, left side */}
+      <PhoneChat ticketNr={ticket['Ticket-Nr.']} ticketTitle={e['Titel']||ticket['Ticket-Art']}/>
+
+      <div className="dp">
+        <div className="dph">
+          <button className="btn btn-ghost btn-sm" onClick={onClose}>← Zurück</button>
+          <div style={{flex:1,minWidth:0}}>
+            <div style={{fontFamily:"'DM Mono',monospace",fontSize:11,color:'var(--mu)'}}>
+              #{ticket['Ticket-Nr.']} · {ticket['Ticket-Datum']}
+            </div>
+            <div style={{fontFamily:"'Syne',sans-serif",fontWeight:700,fontSize:16,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
+              {e['Titel'] || ticket['Ticket-Art'] || 'Ticket'}
+            </div>
+          </div>
+          <SBadge status={e['Status']}/>
+          <button className="btn btn-p btn-sm" onClick={save} disabled={saving} style={{minWidth:100,justifyContent:'center'}}>
+            {saving?'⏳ Speichert…':msg||'💾 Speichern'}
+          </button>
+        </div>
+
+        <div className="dpb">
+          {/* LEFT – DETAILS */}
+          <div className="dpl">
+            
+            {/* REDESIGNED TOP INFO BLOCK */}
+            <div style={{display:'flex', flexWrap:'wrap', gap:20, padding:'16px 20px', background:'var(--bg)', border:'1px solid var(--bd)', borderRadius:8, marginBottom:20}}>
+              <div style={{flex:1, minWidth:140}}>
+                <div className="dpfl">Melder</div>
+                <div style={{fontSize:14, fontWeight:600, color:'var(--tx)', marginTop:4}}>{ticket['Name']||ticket['Antragsteller']||'–'}</div>
+              </div>
+              <div style={{flex:1, minWidth:250}}>
+                <div className="dpfl">E-Mail</div>
+                <div style={{fontSize:13.5, color:'var(--tx)', marginTop:4, wordBreak:'break-word'}}>{ticket['E-Mail']||'–'}</div>
+              </div>
+              <div style={{flex:1, minWidth:160}}>
+                <div className="dpfl">Art</div>
+                <div style={{fontSize:13.5, color:'var(--tx)', marginTop:4, fontWeight:500}}>{ticket['Ticket-Art']||'–'}</div>
+              </div>
+              <div style={{minWidth:100}}>
+                <div className="dpfl">Datum</div>
+                <div style={{fontSize:13.5, color:'var(--tx)', marginTop:4}}>{ticket['Ticket-Datum']||'–'}</div>
+              </div>
+            </div>
+
+            <EF label="Titel" value={e['Titel']} onChange={v=>set('Titel',v)}/>
+            
+            <EF 
+              label={isArchived(ticket) ? "Abgeschlossen am" : "Voraussichtlicher Abschluss"} 
+              value={e['Voraussichtlicher Abschluss']} 
+              type="date" 
+              onChange={v=>set('Voraussichtlicher Abschluss',v)}
+            />
+
+            {isStoerung && <>
+              <EF label="Kategorie" value={e['Kategorie']} type="select" opts={CATS} onChange={v=>set('Kategorie',v)}/>
+              <EF label="Problembeschreibung" value={e['Problembeschreibung']} type="textarea" onChange={v=>set('Problembeschreibung',v)}/>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+                <EF label="Seit wann?" value={e['Seit wann Problem?']} type="select" opts={SINCE} onChange={v=>set('Seit wann Problem?',v)}/>
+                <EF label="Wer betroffen?" value={e['Wer ist betroffen?']} type="select" opts={AFFECTED} onChange={v=>set('Wer ist betroffen?',v)}/>
+              </div>
+            </>}
+
+            {isGeraet && <>
+              <EF label="Gerätetyp" value={e['Gerätetyp (Mehrere Antworten möglich)']} type="chips" opts={DEVS} onChange={v=>set('Gerätetyp (Mehrere Antworten möglich)',v)}/>
+              <EF label="Zweck" value={e['Zweck der Nutzung']} type="select" opts={PURPOSES} onChange={v=>set('Zweck der Nutzung',v)}/>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+                <EF label="Von" value={e['(Von) Zeitraum']} type="date" onChange={v=>set('(Von) Zeitraum',v)}/>
+                <EF label="Bis" value={e['(Bis) Zeitraum']} type="date" onChange={v=>set('(Bis) Zeitraum',v)}/>
+              </div>
+            </>}
+
+            {isAenderung && <>
+              <EF label="Art der Anfrage" value={e['Art der Anfrage']} type="select" opts={REQS} onChange={v=>set('Art der Anfrage',v)}/>
+              <EF label="Beschreibung" value={e['Beschreibung']} type="textarea" onChange={v=>set('Beschreibung',v)}/>
+              <EF label="Wer betroffen?" value={e['Wer ist betroffen?']} type="select" opts={AFFECTED} onChange={v=>set('Wer ist betroffen?',v)}/>
+            </>}
+
+            {imgs.length>0 && (
+              <div style={{marginTop:8}}>
+                <div className="dpfl">Ticket Anhänge</div>
+                <div className="ssgrid">
+                  {imgs.map((url,i)=>(
+                    <a key={i} href={url} target="_blank" rel="noopener noreferrer">
+                      <img src={url} className="ssimg" alt={`Screenshot ${i+1}`}/>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div style={{marginTop:20,paddingTop:14,borderTop:'1px solid var(--bd)'}}>
+              <MailButton ticket={{...ticket,...e}}/>
+            </div>
+          </div>
+
+          {/* RIGHT – CONTROLS */}
+          <div className="dpr">
+            {/* PRIO */}
+            <div className="dp-card">
+              <div className="dp-sec">Priorität</div>
+              <div className="stlist">
+                <div className={`stopt${!e['Priorität']?' act':''}`} style={{color:'var(--mu)'}} onClick={()=>set('Priorität',null)}>
+                  ⚪ Keine Priorität
+                </div>
+                {PRIORITIES.map(p => (
+                  <div key={p.v} className={`stopt${e['Priorität']===p.v?' act':''}`}
+                    style={{color:p.c, background:e['Priorität']===p.v?p.bg:'transparent'}}
+                    onClick={()=>set('Priorität',p.v)}>
+                    {p.e} {p.v}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* STATUS */}
+            <div className="dp-card">
+              <div className="dp-sec">Status</div>
+              <div className="stlist">
+                {statuses.map(s => {
+                  const c = scFn(s.name);
+                  return (
+                    <div key={s.name} className={`stopt${e['Status']===s.name?' act':''}`}
+                      style={{color:c.c, background:e['Status']===s.name?c.bg:'transparent'}}
+                      onClick={()=>set('Status',s.name)}>
+                      <span className="sdot" style={{background:c.c}}/>{s.name}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* ASSIGNEE */}
+            <div className="dp-card">
+              <div className="dp-sec">Zugewiesen an</div>
+              <MultiAssigneeSelect value={e['Zugewiesen an']} onChange={v=>set('Zugewiesen an',v)}/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ══════════════════════════════════════════════
+// TABLE VIEW (DRAGGABLE + SORTABLE COLUMNS)
+// ══════════════════════════════════════════════
+function TableView({tickets, viewId, onSelect}) {
+  const baseCols = VIEW_COLS[viewId] || VIEW_COLS.all;
+  const [order, setOrder] = useState([]);
+  const [draggedKey, setDraggedKey] = useState(null);
+  const [dragOverKey, setDragOverKey] = useState(null);
+  const [sortKey, setSortKey] = useState(null);
+  const [sortDir, setSortDir] = useState('asc');
+
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('runge_col_order_'+viewId) || 'null');
+      const baseKeys = baseCols.map(c=>c.k);
+      if (saved && Array.isArray(saved) && saved.length > 0) {
+        const valid = saved.filter(k => baseKeys.includes(k));
+        const missing = baseKeys.filter(k => !saved.includes(k));
+        setOrder([...valid, ...missing]);
+      } else {
+        setOrder(baseKeys);
+      }
+    } catch(err) { setOrder(baseCols.map(c=>c.k)); }
+  }, [viewId, baseCols]);
+
+  const cols = order.map(k=>baseCols.find(c=>c.k===k)).filter(Boolean);
+
+  const sortedTickets = [...tickets].sort((a,b) => {
+    if(!sortKey) return 0;
+    const av = a[sortKey]||''; const bv = b[sortKey]||'';
+    if(sortKey==='Priorität'){
+      const aw=getPrioObj(av)?.w??0; const bw=getPrioObj(bv)?.w??0;
+      return sortDir==='asc'?aw-bw:bw-aw;
+    }
+    const cmp = String(av).localeCompare(String(bv),'de');
+    return sortDir==='asc'?cmp:-cmp;
+  });
+
+  const handleSort = k => {
+    if(sortKey===k) setSortDir(d=>d==='asc'?'desc':'asc');
+    else { setSortKey(k); setSortDir('asc'); }
+  };
+
+  const dragStart = (k,e) => { setDraggedKey(k); e.dataTransfer.effectAllowed='move'; };
+  const dragOver  = (k,e) => { e.preventDefault(); setDragOverKey(k); };
+  const drop      = (k) => {
+    if(!draggedKey||draggedKey===k)return;
+    const next=[...order];
+    const from=next.indexOf(draggedKey); const to=next.indexOf(k);
+    next.splice(from,1); next.splice(to,0,draggedKey);
+    setOrder(next); setDraggedKey(null); setDragOverKey(null);
+    localStorage.setItem('runge_col_order_'+viewId, JSON.stringify(next));
+  };
+
+  if(!tickets.length) return (
+    <div className="empty"><div className="eico">📭</div><h3>Keine Tickets</h3><p>In dieser Ansicht sind keine Tickets vorhanden.</p></div>
+  );
+
+  return (
+    <div className="tw-wrap">
+      <table>
+        <thead>
+          <tr>
+            {cols.map(c=>(
+              <th key={c.k}
+                className={dragOverKey===c.k?'drag-over':''}
+                draggable onDragStart={e=>dragStart(c.k,e)} onDragOver={e=>dragOver(c.k,e)}
+                onDrop={()=>drop(c.k)} onDragEnd={()=>{setDraggedKey(null);setDragOverKey(null);}}
+                onClick={()=>handleSort(c.k)}>
+                {c.h}
+                {sortKey===c.k && <span className="sort-ic">{sortDir==='asc'?'↑':'↓'}</span>}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {sortedTickets.map(t=>(
+            <tr key={t['Ticket-Nr.']} onClick={()=>onSelect(t)}>
+              {cols.map(c=>(
+                <td key={c.k} className={c.cls||''} style={{maxWidth:c.trunc?240:undefined}}>
+                  {c.isSt       ? <SBadge status={t[c.k]}/> :
+                   c.isPrio     ? <PBadge prio={t[c.k]}/> :
+                   c.isTitle    ? <>{trunc(t[c.k],c.trunc)||'–'}</> :
+                   c.isAssignee ? <AssigneeChip value={t[c.k]}/> :
+                   c.mono       ? <span className="tnr">{t[c.k]}</span> :
+                   c.trunc      ? trunc(t[c.k],c.trunc) : (t[c.k]||'')}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════
+// KANBAN VIEW
+// ══════════════════════════════════════════════
+function KanbanView({tickets, onSelect, viewId}) {
+  const {statuses, scFn} = useContext(AppCtx);
+  const groups = {};
+  statuses.forEach(s=>{ groups[s.name]=[]; });
+  tickets.forEach(t=>{ const s=t['Status']||'Offen'; if(!groups[s])groups[s]=[]; groups[s].push(t); });
+  const activeCols = statuses.filter(s=>groups[s.name]?.length>0||(viewId!=='archiv'&&s.name==='Offen'));
+  return (
+    <div className="kb">
+      {activeCols.map(st=>{
+        const c = scFn(st.name);
+        const items = groups[st.name]||[];
+        return (
+          <div key={st.name} className="kbc">
+            <div className="kbh" style={{color:c.c,background:c.bg}}>{st.name} ({items.length})</div>
+            <div className="kbb">
+              {items.map(t=>(
+                <div key={t['Ticket-Nr.']} className="kbcard" onClick={()=>onSelect(t)}>
+                  <div className="kbnr">
+                    #{t['Ticket-Nr.']}
+                    {t['Priorität'] && <PBadge prio={t['Priorität']}/>}
+                  </div>
+                  <div className="kbtitle">{t['Titel']||t['Ticket-Art']||'–'}</div>
+                  <div className="kbname">👤 {t['Name']||t['Antragsteller']}</div>
+                  {t['Zugewiesen an'] && (
+                    <div className="kb-assign-wrap">
+                      <AssigneeChip value={t['Zugewiesen an']}/>
+                    </div>
+                  )}
+                  {t['Ticket-Datum']&&<div style={{fontSize:10,color:'var(--mu)',marginTop:6}}>📅 {t['Ticket-Datum']}</div>}
+                </div>
+              ))}
+              {!items.length&&<div style={{textAlign:'center',color:'var(--mu)',fontSize:11.5,padding:'18px 0'}}>Leer</div>}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════
+// PUBLIC FORM
+// ══════════════════════════════════════════════
+function PublicForm() {
+  const INIT = {titel:'',email:'',name:'',type:'',cat:'',catC:'',desc:'',since:'',affected:'',devs:[],devC:'',purpose:'',purposeC:'',von:'',bis:'',reqtype:'',reqC:'',changeDesc:'',changeAff:'',imgs:[]};
+  const [f,setF]=useState(INIT); const [loading,setL]=useState(false); const [done,setDone]=useState(false);
+  const [formErr,setFormErr]=useState('');
+
+  useEffect(()=>{
+    const onPaste=ev=>{
+      const items=ev.clipboardData?.items||[];const newImgs=[];
+      for(const item of items){ if(item.type.startsWith('image/')){const file=item.getAsFile();if(file)newImgs.push(file);} }
+      if(newImgs.length) setF(p=>({...p,imgs:[...p.imgs,...newImgs]}));
+    };
+    document.addEventListener('paste',onPaste);
+    return ()=>document.removeEventListener('paste',onPaste);
+  },[]);
+
+  const togDev=d=>setF(p=>({...p,devs:p.devs.includes(d)?p.devs.filter(x=>x!==d):[...p.devs,d]}));
+  const addImgs=files=>setF(p=>({...p,imgs:[...p.imgs,...Array.from(files)]}));
+  const rmImg=i=>setF(p=>({...p,imgs:p.imgs.filter((_,j)=>j!==i)}));
+
+  const submit=async ev=>{
+    ev.preventDefault(); setFormErr('');
+    if(f.type.includes('Technische Störung')) {
+      if(!f.cat && !f.catC) return setFormErr('Bitte wähle eine Kategorie aus.');
+      if(!f.since) return setFormErr('Bitte gib an, seit wann die Störung besteht.');
+      if(!f.affected) return setFormErr('Bitte wähle aus, wer betroffen ist.');
+    }
+    if(f.type.includes('Gerät ausleihen')) {
+      if(f.devs.length === 0 && !f.devC) return setFormErr('Bitte wähle mindestens ein Gerät aus.');
+      if(!f.purpose && !f.purposeC) return setFormErr('Bitte gib den Zweck der Nutzung an.');
+      if(f.purpose !== 'Home Office') {
+         if(!f.von) return setFormErr('Bitte gib ein Startdatum (Von) an.');
+         if(!f.bis) return setFormErr('Bitte gib ein Enddatum (Bis) an.');
+      }
+    }
+    if(f.type.includes('Änderung')) {
+      if(!f.reqtype && !f.reqC) return setFormErr('Bitte wähle die Art der Anfrage aus.');
+      if(!f.changeAff) return setFormErr('Bitte wähle aus, wer von der Änderung betroffen ist.');
+    }
+    setL(true);
+    const imgUrls = await uploadFiles(f.imgs);
+    const row={
+      'Ticket-Nr.':genTicketNr(),
+      'Ticket-Datum':new Date().toLocaleDateString('de-DE'),
+      'Ticket-Art':f.type,
+      'Name':f.name,
+      'Antragsteller':f.name,
+      'E-Mail':f.email,
+      'Titel':f.titel,
+      'Kategorie':f.cat||(f.catC||''),
+      'Status':'Offen', 
+      'Priorität': null,
+      'Problembeschreibung':f.desc,
+      'Seit wann Problem?':f.since,
+      'Wer ist betroffen?':f.affected || f.changeAff,
+      'Gerätetyp (Mehrere Antworten möglich)':f.devs.join(', ')||(f.devC||''),
+      'Zweck der Nutzung':f.purpose||(f.purposeC||''),
+      '(Von) Zeitraum':f.von,
+      '(Bis) Zeitraum':f.bis,
+      'Art der Anfrage':f.reqtype||(f.reqC||''),
+      'Beschreibung':f.changeDesc,
+      'Anlagen-URLs':JSON.stringify(imgUrls),
+    };
+    const {error}=await supabase.from('tickets').insert(row);
+    setL(false);
+    if(!error) setDone(true);
+  };
+
+  if(done) return (
+    <div className="fw"><div className="success">
+      <div className="eico">✅</div>
+      <h2>Ticket eingereicht!</h2>
+      <p>Wir haben Ihre Anfrage erhalten und werden uns schnellstmöglich darum kümmern.</p>
+      <button className="btn btn-p" onClick={() => { setDone(false); setF(INIT); setFormErr(''); }}>Weiteres Ticket einreichen</button>
+    </div></div>
+  );
+
+  return (
+    <div className="fw">
+      <form onSubmit={submit}>
+        <div className="fsec">
+          <div className="fstitle">📝 Neues IT-Ticket</div>
+          {formErr && <div className="alert alert-e" style={{fontWeight:600}}>{formErr}</div>}
+          <div className="dgrid">
+            <div className="ig">
+              <label className="lbl">Ihr Name<span className="req">*</span></label>
+              <input className="inp" required value={f.name} onChange={e=>setF(p=>({...p,name:e.target.value}))} placeholder="Max Mustermann"/>
+            </div>
+            <div className="ig">
+              <label className="lbl">E-Mail<span className="req">*</span></label>
+              <input className="inp" required type="email" value={f.email} onChange={e=>setF(p=>({...p,email:e.target.value}))} placeholder="name@runge-pharma.de"/>
+            </div>
+          </div>
+          <div className="ig">
+            <label className="lbl">Kurztitel<span className="req">*</span></label>
+            <input className="inp" required value={f.titel} onChange={e=>setF(p=>({...p,titel:e.target.value}))} placeholder="Kurze Beschreibung des Problems"/>
+          </div>
+          <div className="ig" style={{marginBottom:0}}>
+            <label className="lbl">Art des Anliegens<span className="req">*</span></label>
+            <div className="rg">
+              {[['🔧 Technische Störung','🔧 Technische Störung'],['💻 Gerät ausleihen / Wunsch','💻 Gerät ausleihen'],['💡 Änderung / Anfrage','💡 Änderung / Anfrage']].map(([lab,val])=>(
+                <label key={val} className={`rw${f.type===val?' sel':''}`}>
+                  <input type="radio" name="type" checked={f.type===val} onChange={()=>{setF(p=>({...p,type:val})); setFormErr('');}} /> {lab}
+                </label>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {f.type.includes('Technische Störung')&&(
+          <div className="fsec">
+            <div className="fstitle">🔧 Störungsdetails</div>
+            <div className="ig">
+              <label className="lbl">Kategorie<span className="req">*</span></label>
+              <div className="rg">
+                {CATS.map(c=><label key={c} className={`rw${f.cat===c?' sel':''}`}>
+                  <input type="radio" name="cat" checked={f.cat===c} onChange={()=>setF(p=>({...p,cat:c,catC:''}))}/> {c}
+                </label>)}
+              </div>
+            </div>
+            <div className="ig"><label className="lbl">Problembeschreibung<span className="req">*</span></label>
+              <textarea className="inp" required value={f.desc} onChange={e=>setF(p=>({...p,desc:e.target.value}))} placeholder="Bitte ausführlich beschreiben…"/></div>
+            <div className="dgrid">
+              <div className="ig"><label className="lbl">Seit wann?<span className="req">*</span></label>
+                <div className="rg">{SINCE.map(s=><label key={s} className={`rw${f.since===s?' sel':''}`}>
+                  <input type="radio" name="since" checked={f.since===s} onChange={()=>setF(p=>({...p,since:s}))}/> {s}
+                </label>)}</div>
+              </div>
+              <div className="ig"><label className="lbl">Wer ist betroffen?<span className="req">*</span></label>
+                <div className="rg">{AFFECTED.map(a=><label key={a} className={`rw${f.affected===a?' sel':''}`}>
+                  <input type="radio" name="aff" checked={f.affected===a} onChange={()=>setF(p=>({...p,affected:a}))}/> {a}
+                </label>)}</div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {f.type.includes('Gerät ausleihen')&&(
+          <div className="fsec">
+            <div className="fstitle">💻 Gerätedetails</div>
+            <div className="ig"><label className="lbl">Gewünschtes Gerät<span className="req">*</span></label>
+              <div className="cg">{DEVS.map(d=><label key={d} className={`cw${f.devs.includes(d)?' sel':''}`}>
+                <input type="checkbox" checked={f.devs.includes(d)} onChange={()=>togDev(d)}/> {d}
+              </label>)}</div></div>
+            <div className="ig"><label className="lbl">Zweck der Nutzung<span className="req">*</span></label>
+              <div className="rg">{PURPOSES.map(p=><label key={p} className={`rw${f.purpose===p?' sel':''}`}>
+                <input type="radio" name="pur" checked={f.purpose===p} onChange={()=>setF(pr=>({...pr,purpose:p}))}/> {p}
+              </label>)}</div></div>
+            <div className="dgrid">
+              <div className="ig"><label className="lbl">Von{f.purpose!=='Home Office'&&<span className="req">*</span>}</label><input className="inp" type="date" value={f.von} onChange={e=>setF(p=>({...p,von:e.target.value}))}/></div>
+              <div className="ig"><label className="lbl">Bis{f.purpose!=='Home Office'&&<span className="req">*</span>}</label><input className="inp" type="date" value={f.bis} onChange={e=>setF(p=>({...p,bis:e.target.value}))}/></div>
+            </div>
+          </div>
+        )}
+
+        {f.type.includes('Änderung')&&(
+          <div className="fsec">
+            <div className="fstitle">💡 Anfrage-Details</div>
+            <div className="ig"><label className="lbl">Art der Anfrage<span className="req">*</span></label>
+              <div className="rg">{REQS.map(r=><label key={r} className={`rw${f.reqtype===r?' sel':''}`}>
+                <input type="radio" name="req" checked={f.reqtype===r} onChange={()=>setF(p=>({...p,reqtype:r}))}/> {r}
+              </label>)}</div></div>
+            <div className="ig"><label className="lbl">Beschreibung<span className="req">*</span></label>
+              <textarea className="inp" required value={f.changeDesc} onChange={e=>setF(p=>({...p,changeDesc:e.target.value}))} placeholder="Bitte ausführlich beschreiben…"/></div>
+            <div className="ig" style={{marginBottom:0}}><label className="lbl">Wer ist betroffen?<span className="req">*</span></label>
+              <div className="rg">{AFFECTED.map(a=><label key={a} className={`rw${f.changeAff===a?' sel':''}`}>
+                <input type="radio" name="caff" checked={f.changeAff===a} onChange={()=>setF(p=>({...p,changeAff:a}))}/> {a}
+              </label>)}</div></div>
+          </div>
+        )}
+
+        {f.type&&(
+          <div className="fsec">
+            <div className="fstitle">📎 Screenshots / Anhänge (Optional)</div>
+            <div className={`pzone${f.imgs.length?' has':''}`}
+              onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();const files=Array.from(e.dataTransfer.files).filter(fi=>fi.type.startsWith('image/'));if(files.length)addImgs(files);}}>
+              {f.imgs.length===0?(
+                <><div style={{fontSize:28,marginBottom:8}}>📋</div>
+                <div><strong>Strg+V</strong> für Screenshot einfügen</div>
+                <div style={{fontSize:11.5,marginTop:5,opacity:.7}}>Oder Datei per Drag & Drop ablegen</div>
+                <label style={{display:'inline-flex',alignItems:'center',gap:5,marginTop:12,cursor:'pointer',color:'var(--g)',fontWeight:600,fontSize:12.5}}>
+                  📁 Datei auswählen<input type="file" multiple accept="image/*,.pdf" style={{display:'none'}} onChange={e=>addImgs(e.target.files)}/>
+                </label></>
+              ):(
+                <><div className="thumbs">
+                  {f.imgs.map((img,i)=><div key={i} className="tw">
+                    <img src={URL.createObjectURL(img)} className="th" alt=""/>
+                    <button type="button" className="trm" onClick={()=>rmImg(i)}>✕</button>
+                  </div>)}
+                  <label className="addth" title="Weitere">+<input type="file" multiple accept="image/*" style={{display:'none'}} onChange={e=>addImgs(e.target.files)}/></label>
+                </div>
+                <div style={{fontSize:11.5,marginTop:8,opacity:.65}}>Strg+V für weitere Screenshots</div></>
+              )}
+            </div>
+          </div>
+        )}
+
+        {f.type&&(
+          <button type="submit" className="btn btn-p" style={{width:'100%',justifyContent:'center',padding:13,fontSize:14}} disabled={loading}>
+            {loading?'⏳ Wird gesendet…':'✉️ Ticket absenden'}
+          </button>
+        )}
+      </form>
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════
+// MITARBEITER & STATUS PAGE
+// ══════════════════════════════════════════════
+function MitarbeiterPage({isAdmin}) {
+  const {employees, statuses, reloadEmployees, reloadStatuses} = useContext(AppCtx);
+  const [tab, setTab] = useState('employees');
+  const [newEmail, setNewEmail] = useState('');
+  const [newDisplay, setNewDisplay] = useState('');
+  const [empMsg, setEmpMsg] = useState('');
+  const [empLoading, setEmpLoading] = useState(false);
+  const [editingEmp, setEditingEmp] = useState(null);
+  const [editVal, setEditVal] = useState('');
+  const [newStName, setNewStName] = useState('');
+  const [newStColor, setNewStColor] = useState(COLOR_PRESETS[0]);
+  const [stMsg, setStMsg] = useState('');
+  const [stLoading, setStLoading] = useState(false);
+  const [editingSt, setEditingSt] = useState(null);
+  const [editStName, setEditStName] = useState('');
+  const [editStColor, setEditStColor] = useState(COLOR_PRESETS[0]);
+
+  const empToast = (m) => { setEmpMsg(m); setTimeout(()=>setEmpMsg(''),3000); };
+  const stToast  = (m) => { setStMsg(m);  setTimeout(()=>setStMsg(''),3000); };
+
+  const addEmployee = async () => {
+    if (!newEmail.trim() || !newDisplay.trim()) return empToast('❌ E-Mail und Anzeigename erforderlich');
+    setEmpLoading(true);
+    const {error} = await supabase.from('employees').insert({email:newEmail.trim(), display_name:newDisplay.trim()});
+    setEmpLoading(false);
+    if (error) empToast('❌ '+error.message);
+    else { empToast('✅ Mitarbeiter hinzugefügt'); setNewEmail(''); setNewDisplay(''); reloadEmployees(); }
+  };
+
+  const deleteEmployee = async (email) => {
+    if (!confirm(`"${email}" entfernen?`)) return;
+    await supabase.from('employees').delete().eq('email', email);
+    reloadEmployees();
+  };
+
+  const saveEditEmp = async (email) => {
+    if (!editVal.trim()) return;
+    await supabase.from('employees').update({display_name: editVal.trim()}).eq('email', email);
+    setEditingEmp(null); reloadEmployees();
+  };
+
+  const addStatus = async () => {
+    if (!newStName.trim()) return stToast('❌ Name erforderlich');
+    if (statuses.find(s=>s.name===newStName.trim())) return stToast('❌ Status existiert bereits');
+    setStLoading(true);
+    const maxOrder = Math.max(...statuses.map(s=>s.sort_order||0), 0);
+    const {error} = await supabase.from('ticket_statuses').insert({
+      name: newStName.trim(), color: newStColor.c, bg: newStColor.bg,
+      sort_order: maxOrder+1, is_archived: false,
+    });
+    setStLoading(false);
+    if (error) stToast('❌ '+error.message);
+    else { stToast('✅ Status erstellt'); setNewStName(''); reloadStatuses(); }
+  };
+
+  const deleteStatus = async (name) => {
+    if (!confirm(`Status "${name}" löschen?`)) return;
+    await supabase.from('ticket_statuses').delete().eq('name', name);
+    reloadStatuses();
+  };
+
+  const saveEditStatus = async (oldName) => {
+    if (!editStName.trim()) return stToast('❌ Name darf nicht leer sein');
+    const {error} = await supabase.from('ticket_statuses').update({
+      name: editStName.trim(), color: editStColor.c, bg: editStColor.bg
+    }).eq('name', oldName);
+    if (error) stToast('❌ '+error.message);
+    else { stToast('✅ Status aktualisiert'); setEditingSt(null); reloadStatuses(); }
+  };
+
+  const seedStatuses = async () => {
+    if (!confirm('Standard-Stati in die Datenbank laden?')) return;
+    for (const s of INITIAL_STATUSES) {
+      await supabase.from('ticket_statuses').upsert(s, {onConflict:'name', ignoreDuplicates:true});
+    }
+    stToast('✅ Standard-Stati geladen');
+    reloadStatuses();
+  };
+
+  return (
+    <div style={{maxWidth:760}}>
+      <h2 style={{fontFamily:"'Syne',sans-serif",fontWeight:700,fontSize:18,marginBottom:6}}>👥 Mitarbeiter & Status</h2>
+      {!isAdmin && (
+        <div className="alert alert-e" style={{marginBottom:14,maxWidth:600}}>
+          🔒 Nur Admins können Änderungen vornehmen. Um Admin zu werden: Supabase → Authentication → Users → User anklicken → User Metadata: <code>{"{"}"is_admin": true{"}"}</code>
+        </div>
+      )}
+      <div className="mt-tabs">
+        <button className={`mt-tab${tab==='employees'?' act':''}`} onClick={()=>setTab('employees')}>
+          👥 Mitarbeiter ({employees.length})
+        </button>
+        <button className={`mt-tab${tab==='statuses'?' act':''}`} onClick={()=>setTab('statuses')}>
+          🏷️ Status ({statuses.length})
+        </button>
+      </div>
+
+      {tab==='employees' && (
+        <div>
+          <p style={{color:'var(--mu)',fontSize:13,marginBottom:16,lineHeight:1.6}}>
+            Mitarbeiter bekommen einen <b>Anzeigenamen</b> (Alias), der überall im System statt der E-Mail angezeigt wird.
+          </p>
+          {empMsg && <div className={`alert ${empMsg.includes('❌')?'alert-e':'alert-s'}`} style={{marginBottom:14}}>{empMsg}</div>}
+          <div style={{background:'var(--wh)',border:'1px solid var(--bd)',borderRadius:10,overflow:'hidden',marginBottom:16}}>
+            <table className="emp-table" style={{margin:0}}>
+              <thead><tr><th>Anzeigename</th><th>E-Mail</th><th style={{width:120}}>Aktionen</th></tr></thead>
+              <tbody>
+                {employees.length===0&&<tr><td colSpan={3} style={{color:'var(--mu)',textAlign:'center',padding:'24px 13px',fontSize:13}}>Noch keine Mitarbeiter angelegt</td></tr>}
+                {employees.map(emp=>(
+                  <tr key={emp.email}>
+                    <td style={{fontWeight:600}}>
+                      {editingEmp===emp.email && isAdmin?(
+                        <div style={{display:'flex',gap:6}}>
+                          <input className="inline-inp" value={editVal} onChange={e=>setEditVal(e.target.value)}
+                            onKeyDown={e=>e.key==='Enter'&&saveEditEmp(emp.email)} autoFocus/>
+                          <button className="btn btn-p btn-sm" onClick={()=>saveEditEmp(emp.email)}>✓</button>
+                          <button className="btn btn-o btn-sm" onClick={()=>setEditingEmp(null)}>✕</button>
+                        </div>
+                      ):(
+                        <div style={{display:'flex',alignItems:'center',gap:8}}>
+                          <div className="assign-av" style={{width:28,height:28,fontSize:11}}>{(emp.display_name||emp.email)[0].toUpperCase()}</div>
+                          {emp.display_name || <span style={{color:'var(--mu)',fontStyle:'italic'}}>kein Alias</span>}
+                        </div>
+                      )}
+                    </td>
+                    <td style={{color:'var(--mu)',fontSize:12.5,fontFamily:'DM Mono,monospace'}}>{emp.email}</td>
+                    <td>
+                      {isAdmin&&(
+                        <div style={{display:'flex',gap:4}}>
+                          <button className="btn btn-ghost btn-sm" onClick={()=>{setEditingEmp(emp.email);setEditVal(emp.display_name||'');}}>✏️</button>
+                          <button className="btn btn-ghost btn-sm" style={{color:'#dc2626'}} onClick={()=>deleteEmployee(emp.email)}>🗑️</button>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {isAdmin && (
+            <div className="add-row">
+              <div className="add-row-title">➕ Mitarbeiter hinzufügen</div>
+              <div className="dgrid" style={{marginBottom:12}}>
+                <div><label className="lbl" style={{fontSize:11.5}}>E-Mail (Supabase Auth)</label>
+                  <input className="inp" value={newEmail} onChange={e=>setNewEmail(e.target.value)} placeholder="alex@runge-pharma.de" style={{fontSize:13}}/></div>
+                <div><label className="lbl" style={{fontSize:11.5}}>Anzeigename (Alias)</label>
+                  <input className="inp" value={newDisplay} onChange={e=>setNewDisplay(e.target.value)} placeholder="Alex"
+                    onKeyDown={e=>e.key==='Enter'&&addEmployee()} style={{fontSize:13}}/></div>
+              </div>
+              <button className="btn btn-p" onClick={addEmployee} disabled={empLoading}>
+                {empLoading?'⏳ Speichert…':'➕ Hinzufügen'}
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {tab==='statuses' && (
+        <div>
+          <p style={{color:'var(--mu)',fontSize:13,marginBottom:16,lineHeight:1.6}}>
+            Stati werden aus der Datenbank geladen und sind für alle sichtbar.
+          </p>
+          {stMsg && <div className={`alert ${stMsg.includes('❌')?'alert-e':'alert-s'}`} style={{marginBottom:14}}>{stMsg}</div>}
+          {statuses.length===0 && isAdmin && (
+            <div style={{textAlign:'center',padding:'30px 0',marginBottom:16}}>
+              <div style={{fontSize:32,marginBottom:10}}>🏷️</div>
+              <p style={{color:'var(--mu)',fontSize:13,marginBottom:14}}>Noch keine Stati vorhanden.</p>
+              <button className="btn btn-o" onClick={seedStatuses}>📋 Standard-Stati laden</button>
+            </div>
+          )}
+          {statuses.map(s=>(
+            <div key={s.name} className="st-manage-row">
+              {editingSt === s.name && isAdmin ? (
+                <div style={{display:'flex', gap:10, alignItems:'center', flexWrap:'wrap', flex:1}}>
+                  <input className="inline-inp" style={{width:160}} value={editStName} onChange={e=>setEditStName(e.target.value)} />
+                  <div className="color-presets" style={{marginTop:0}}>
+                    {COLOR_PRESETS.map(p=>(
+                      <div key={p.label} className={`color-dot${editStColor.c===p.c?' sel':''}`}
+                        style={{background:p.c, width:22, height:22}} title={p.label}
+                        onClick={()=>setEditStColor(p)} />
+                    ))}
+                  </div>
+                  <div style={{marginLeft:'auto', display:'flex', gap:6}}>
+                    <button className="btn btn-p btn-sm" onClick={()=>saveEditStatus(s.name)}>✓ Speichern</button>
+                    <button className="btn btn-o btn-sm" onClick={()=>setEditingSt(null)}>✕</button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <span className="st-preview" style={{color:s.color,background:s.bg,minWidth:180}}>
+                    <span className="sdot" style={{background:s.color}}/>{s.name}
+                  </span>
+                  <span style={{fontSize:11,color:'var(--mu)',fontFamily:'DM Mono,monospace',flex:1}}>
+                    {s.color} · {s.bg}
+                  </span>
+                  {isAdmin && (
+                    <div style={{display:'flex', gap:4, flexShrink:0}}>
+                      <button className="btn btn-ghost btn-sm" onClick={()=>{
+                        setEditingSt(s.name); setEditStName(s.name);
+                        const matchedColor = COLOR_PRESETS.find(p=>p.c === s.color) || COLOR_PRESETS[0];
+                        setEditStColor(matchedColor);
+                      }}>✏️</button>
+                      <button className="btn btn-ghost btn-sm" style={{color:'#dc2626'}} onClick={()=>deleteStatus(s.name)}>🗑️</button>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          ))}
+          {isAdmin && !editingSt && (
+            <div className="add-row" style={{marginTop:14}}>
+              <div className="add-row-title">➕ Neuen Status erstellen</div>
+              <div className="ig">
+                <label className="lbl" style={{fontSize:11.5}}>Status-Name</label>
+                <input className="inp" value={newStName} onChange={e=>setNewStName(e.target.value)}
+                  placeholder="z.B. Eskaliert" style={{fontSize:13,maxWidth:340}}/>
+              </div>
+              <div className="ig" style={{marginBottom:16}}>
+                <label className="lbl" style={{fontSize:11.5}}>Farbe wählen</label>
+                <div className="color-presets">
+                  {COLOR_PRESETS.map(p=>(
+                    <div key={p.label} className={`color-dot${newStColor.c===p.c?' sel':''}`}
+                      style={{background:p.c}} title={p.label}
+                      onClick={()=>setNewStColor(p)}>
+                      {newStColor.c===p.c && <span style={{color:'#fff',fontSize:12}}>✓</span>}
+                    </div>
+                  ))}
+                </div>
+                {newStName && (
+                  <div style={{marginTop:10}}>
+                    <span style={{fontSize:11,color:'var(--mu)',marginRight:8}}>Vorschau:</span>
+                    <span className="st-preview" style={{color:newStColor.c,background:newStColor.bg}}>
+                      <span className="sdot" style={{background:newStColor.c}}/>{newStName||'Neuer Status'}
+                    </span>
+                  </div>
+                )}
+              </div>
+              <div style={{display:'flex',gap:8,alignItems:'center'}}>
+                <button className="btn btn-p" onClick={addStatus} disabled={stLoading}>
+                  {stLoading?'⏳ Erstellt…':'✅ Status erstellen'}
+                </button>
+                {statuses.length>0&&<button className="btn btn-o btn-sm" onClick={seedStatuses}>🔄 Fehlende Standard-Stati laden</button>}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════
+// SETTINGS PAGE
+// ══════════════════════════════════════════════
+function SettingsPage({user, onLogout, showPw, isAdmin}) {
+  const {displayName} = useContext(AppCtx);
+  const name = displayName(user?.email);
+  return (
+    <div>
+      <h2 style={{fontFamily:"'Syne',sans-serif",fontWeight:700,fontSize:18,marginBottom:18}}>⚙️ Einstellungen</h2>
+      <div className="stsec">
+        <div className="stitle">Konto</div>
+        <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
+          <div className="av" style={{width:42,height:42,fontSize:16}}>{(name||'?')[0].toUpperCase()}</div>
+          <div>
+            <div style={{fontWeight:600,fontSize:14}}>{name !== user?.email ? name : user?.email}</div>
+            {name !== user?.email && <div style={{color:'var(--mu)',fontSize:12}}>{user?.email}</div>}
+            <div style={{color:'var(--mu)',fontSize:12,marginTop:2}}>
+              {isAdmin ? '👑 IT-Administrator' : '🔧 IT-Team Mitarbeiter'}
+            </div>
+          </div>
+        </div>
+        <div style={{display:'flex',gap:8}}>
+          <button className="btn btn-o btn-sm" onClick={showPw}>🔒 Passwort ändern</button>
+          <button className="btn btn-o btn-sm" style={{color:'#dc2626'}} onClick={onLogout}>🚪 Abmelden</button>
+        </div>
+      </div>
+      <div className="stsec">
+        <div className="stitle">Neue IT-Mitarbeiter einladen</div>
+        <p style={{color:'var(--mu)',fontSize:13,lineHeight:1.6,marginBottom:14}}>
+          Neue Konten werden über das Supabase-Dashboard erstellt:<br/>
+          <strong>Authentication → Users → Invite user</strong><br/>
+          Danach den Benutzer in <strong>Mitarbeiter & Status</strong> mit Anzeigename eintragen.
+        </p>
+        <a href="https://supabase.com/dashboard" target="_blank" rel="noopener noreferrer" className="btn btn-o btn-sm">
+          🔗 Zum Supabase-Dashboard
+        </a>
+      </div>
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════
+// APP
+// ══════════════════════════════════════════════
+function App() {
+  const [user,setUser]           = useState(null);
+  const [ready,setReady]         = useState(false);
+  const [tickets,setTickets]     = useState([]);
+  const [employees,setEmployees] = useState([]);
+  const [statuses,setStatuses]   = useState([]);
+  const [view,setView]           = useState('new');
+  const [mode,setMode]           = useState('table');
+  const [sel,setSel]             = useState(null);
+  const [showLogin,setShowLogin] = useState(false);
+  const [showPw,setShowPw]       = useState(false);
+  const [search,setSearch]       = useState('');
+  const [loading,setLoading]     = useState(false);
+  const [fetchErr,setFetchErr]   = useState('');
+  const [rtStatus,setRt]         = useState('off');
+  const rtRef = useRef(null);
+
+  const [viewOrder, setViewOrder] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('runge_view_order')||'null');
+      if (saved && Array.isArray(saved) && DEFAULT_VIEW_ORDER.every(k=>saved.includes(k))) return saved;
+    } catch(err) {}
+    return DEFAULT_VIEW_ORDER;
+  });
+
+  const isAdmin = user?.user_metadata?.is_admin === true;
+
+  const displayName = useCallback((val) => {
+    if (!val) return '–';
+    const byEmail = employees.find(e=>e.email.toLowerCase()===val.toLowerCase());
+    if (byEmail?.display_name) return byEmail.display_name;
+    return val;
+  }, [employees]);
+
+  const scFn = useCallback((s) => {
+    const found = statuses.find(st=>st.name===s);
+    return found ? {c:found.color, bg:found.bg} : {c:'#6b7280', bg:'#f9fafb'};
+  }, [statuses]);
+
+  const loadEmployees = useCallback(async () => {
+    const {data} = await supabase.from('employees').select('*').order('display_name');
+    setEmployees(data||[]);
+  }, []);
+
+  const loadStatuses = useCallback(async () => {
+    const {data,error} = await supabase.from('ticket_statuses').select('*').eq('is_archived',false).order('sort_order');
+    if (!error && data) setStatuses(data);
+  }, []);
+
+  useEffect(()=>{
+    supabase.auth.getSession().then(async({data:{session}})=>{
+      if(session){
+        // Token auffrischen damit user_metadata (is_admin) aktuell ist
+        const {data:refreshed}=await supabase.auth.refreshSession();
+        setUser(refreshed?.session?.user??session?.user??null);
+      } else {
+        setUser(null);
+      }
+      setReady(true);
+    });
+    const {data:{subscription}}=supabase.auth.onAuthStateChange((_,s)=>setUser(s?.user??null));
+    return ()=>subscription.unsubscribe();
+  },[]);
+
+  useEffect(()=>{ loadEmployees(); loadStatuses(); },[]);
+
+  const fetchTickets = useCallback(async()=>{
+    setLoading(true); setFetchErr('');
+    const {data,error}=await supabase.from('tickets').select('*').order('"Ticket-Nr."',{ascending:false});
+    if(error){
+      const{data:d2,error:e2}=await supabase.from('tickets').select('*');
+      if(!e2&&d2)setTickets(d2); else setFetchErr(error.message);
+    } else if(data) setTickets(data);
+    setLoading(false);
+  },[]);
+
+  useEffect(()=>{
+    if(!user){if(rtRef.current){supabase.removeChannel(rtRef.current);rtRef.current=null;}setRt('off');return;}
+    fetchTickets(); setRt('connecting');
+    const ch=supabase.channel('tickets-rt')
+      .on('postgres_changes',{event:'INSERT',schema:'public',table:'tickets'},p=>{setTickets(prev=>[p.new,...prev]);})
+      .on('postgres_changes',{event:'UPDATE',schema:'public',table:'tickets'},p=>{
+        setTickets(prev=>prev.map(t=>t['Ticket-Nr.']===p.new['Ticket-Nr.']?p.new:t));
+        setSel(prev=>prev&&prev['Ticket-Nr.']===p.new['Ticket-Nr.']?p.new:prev);
+      })
+      .on('postgres_changes',{event:'DELETE',schema:'public',table:'tickets'},p=>{
+        setTickets(prev=>prev.filter(t=>t['Ticket-Nr.']!==p.old['Ticket-Nr.']));
+      })
+      .subscribe(status=>{
+        if(status==='SUBSCRIBED')setRt('live');
+        else if(['CHANNEL_ERROR','TIMED_OUT'].includes(status))setRt('error');
+        else if(status==='CLOSED')setRt('off');
+      });
+    rtRef.current=ch;
+    return ()=>{supabase.removeChannel(ch);rtRef.current=null;setRt('off');};
+  },[user,fetchTickets]);
+
+  const logout=async()=>{await supabase.auth.signOut();setView('new');setTickets([]);};
+
+  const moveView=(id,dir)=>{
+    const idx=viewOrder.indexOf(id); if(idx<0)return;
+    const next=[...viewOrder]; const target=idx+dir;
+    if(target<0||target>=next.length)return;
+    [next[idx],next[target]]=[next[target],next[idx]];
+    setViewOrder(next); localStorage.setItem('runge_view_order',JSON.stringify(next));
+  };
+
+  const getTickets=()=>{
+    let ts=[];
+    if(VIEWS[view]) ts=tickets.filter(t=>VIEWS[view].filter(t,user,employees));
+    if(search){const q=search.toLowerCase();ts=ts.filter(t=>Object.values(t).some(v=>v&&String(v).toLowerCase().includes(q)));}
+    return ts;
+  };
+
+  const filtered   = getTickets();
+  const openCount  = tickets.filter(t=>t['Status']==='Offen' && !isArchived(t)).length;
+  const mineCount  = tickets.filter(t=>{
+    if (isArchived(t)) return false;
+    const val=t['Zugewiesen an']||''; if(!user)return false;
+    const assignees = val.split(',').map(e=>e.trim().toLowerCase()).filter(Boolean);
+    if(assignees.includes(user.email.toLowerCase())) return true;
+    const myDisp=employees.find(e=>e.email.toLowerCase()===user.email.toLowerCase())?.display_name;
+    return myDisp&&assignees.includes(myDisp.toLowerCase());
+  }).length;
+
+  const isITView   = !['new','settings','mitarbeiter'].includes(view);
+  const currentEmployee = employees.find(e=>e.email.toLowerCase()===user?.email?.toLowerCase());
+  const userDisplayName = currentEmployee?.display_name || user?.email || '?';
+  const userInitial = (userDisplayName[0]||'?').toUpperCase();
+
+  if(!ready)return(
+    <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh',color:'var(--mu)',fontFamily:'DM Sans,sans-serif',fontSize:14}}>⏳ Lädt…</div>
+  );
+
+  const ctxValue = {statuses, employees, user, displayName, scFn, isAdmin, reloadEmployees:loadEmployees, reloadStatuses:loadStatuses};
+
+  return (
+    <AppCtx.Provider value={ctxValue}>
+    <div className="app">
+
+      {/* ── SIDEBAR ── */}
+      <div className="sb">
+        <div className="sb-logo" onClick={()=>window.location.href='Startseite.html'} title="Zur Startseite">
+          <img src="logo.png" alt="Logo" onError={e=>{e.target.style.display='none';e.target.nextSibling.style.display='flex';}}/>
+          <div className="sb-logo-ico" style={{display:'none', width:40,height:40,background:'rgba(255,255,255,.1)',borderRadius:8,alignItems:'center',justifyContent:'center',fontSize:20,flexShrink:0}}>💊</div>
+          <div className="sb-logo-txt">
+            <h1>Runge Pharma</h1>
+            <p>IT-Service Desk</p>
+          </div>
+        </div>
+
+        <div className="sb-sec">
+          <div className="sb-sec-lbl">Allgemein</div>
+          <div className={`ni${view==='new'?' act':''}`} onClick={()=>setView('new')}>📝 Neues Ticket</div>
+        </div>
+
+        {user && <>
+          <div className="sb-sec">
+            <div className="sb-sec-lbl">Ansichten <span style={{opacity:.4,fontWeight:400}}>↑↓ sortierbar</span></div>
+            {viewOrder.map((id,idx)=>{
+              const cfg=VIEWS[id]; if(!cfg)return null;
+              return (
+                <div key={id} className="ni-row">
+                  <div className={`ni${view===id?' act':''}`} onClick={()=>setView(id)}>
+                    {cfg.label}
+                    {id==='open'&&openCount>0&&<span className="ni-badge">{openCount}</span>}
+                    {id==='mine'&&mineCount>0&&<span className="ni-badge">{mineCount}</span>}
+                  </div>
+                  <div className="ni-sort">
+                    {idx>0&&<button className="ni-sarr" onClick={e=>{e.stopPropagation();moveView(id,-1);}}>▲</button>}
+                    {idx<viewOrder.length-1&&<button className="ni-sarr" onClick={e=>{e.stopPropagation();moveView(id,1);}}>▼</button>}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="sb-sec">
+            <div className="sb-sec-lbl">Verwaltung</div>
+            <div className={`ni${view==='mitarbeiter'?' act':''}`} onClick={()=>setView('mitarbeiter')}>👥 Mitarbeiter & Status</div>
+            <div className={`ni${view==='settings'?' act':''}`} onClick={()=>setView('settings')}>⚙️ Einstellungen</div>
+          </div>
+        </>}
+
+        {!user&&(
+          <div className="sb-sec">
+            <div className="ni" onClick={()=>setShowLogin(true)} style={{color:'rgba(255,255,255,.4)'}}>🔑 IT-Login</div>
+          </div>
+        )}
+
+        <div className="sb-foot">
+          {user?(
+            <>
+              <div className="user-row" onClick={()=>setShowPw(true)}>
+                <div className="av">{userInitial}</div>
+                <div style={{flex:1,minWidth:0}}>
+                  <div className="u-name">{userDisplayName}</div>
+                  <div className="u-sub">{userDisplayName!==user.email?user.email:'Passwort ändern'}</div>
+                </div>
+              </div>
+              <div className="ni" onClick={logout}>🚪 Abmelden</div>
+            </>
+          ):(
+            <div className="ni" onClick={()=>setShowLogin(true)}>🔑 IT-Login</div>
+          )}
+        </div>
+      </div>
+
+      {/* ── MAIN ── */}
+      <div className="main">
+        <div className="topbar">
+          <div className="tb-title">
+            {view==='new'&&'📝 Ticket einreichen'}
+            {view==='settings'&&'⚙️ Einstellungen'}
+            {view==='mitarbeiter'&&'👥 Mitarbeiter & Status'}
+            {VIEWS[view]&&VIEWS[view].label}
+          </div>
+
+          {user&&isITView&&(
+            <div className="tb-right">
+              <div className="ss">
+                <span className="ss-ic">🔍</span>
+                <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Suchen…"/>
+              </div>
+              <div className="vtog">
+                <button className={`vbtn${mode==='table'?' act':''}`} onClick={()=>setMode('table')} title="Tabelle">☰</button>
+                <button className={`vbtn${mode==='kanban'?' act':''}`} onClick={()=>setMode('kanban')} title="Kanban">⬛</button>
+              </div>
+              <button className="btn btn-ghost btn-sm" onClick={fetchTickets} title="Aktualisieren">🔄</button>
+              <div style={{display:'flex',alignItems:'center',gap:6}}>
+                <span style={{
+                  background:rtStatus==='live'?'#16a34a':rtStatus==='connecting'?'#d97706':rtStatus==='error'?'#dc2626':'#94a3b8',
+                  width:7,height:7,borderRadius:'50%',flexShrink:0,display:'inline-block'
+                }}/>
+                <span style={{color:'var(--mu)',fontSize:11,fontWeight:500}}>
+                  {rtStatus==='live'?'Live':rtStatus==='connecting'?'Verbindet…':rtStatus==='error'?'Fehler':'Offline'}
+                </span>
+              </div>
+              <div style={{color:'var(--mu)',fontSize:12}}>{filtered.length} Tickets</div>
+            </div>
+          )}
+        </div>
+
+        <div className="content">
+          {view==='new'&&<PublicForm/>}
+          {view==='settings'&&user&&<SettingsPage user={user} onLogout={logout} showPw={()=>setShowPw(true)} isAdmin={isAdmin}/>}
+          {view==='mitarbeiter'&&user&&<MitarbeiterPage isAdmin={isAdmin}/>}
+
+          {user&&isITView&&loading&&(
+            <div className="empty"><div className="eico">⏳</div><h3>Lädt…</h3></div>
+          )}
+          {user&&isITView&&!loading&&fetchErr&&(
+            <div style={{background:'#fee2e2',color:'#991b1b',padding:'14px 18px',borderRadius:10,fontSize:13}}>
+              <strong>⚠️ Fehler:</strong> {fetchErr}
+            </div>
+          )}
+          {user&&isITView&&!loading&&!fetchErr&&(
+            mode==='table'
+              ?<TableView tickets={filtered} viewId={view} onSelect={setSel}/>
+              :<KanbanView tickets={filtered} onSelect={setSel} viewId={view}/>
+          )}
+          {!user&&isITView&&(
+            <div className="empty">
+              <div className="eico">🔒</div><h3>Anmeldung erforderlich</h3>
+              <p style={{fontSize:13}}>Das IT-Dashboard ist nur für autorisierte Mitarbeiter.</p>
+              <button className="btn btn-p" style={{marginTop:14}} onClick={()=>setShowLogin(true)}>🔑 Jetzt anmelden</button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ── MODALS ── */}
+      {showLogin&&<LoginModal onClose={()=>setShowLogin(false)}/>}
+      {showPw&&<PwModal onClose={()=>setShowPw(false)}/>}
+      {sel&&(
+        <DetailPanel
+          ticket={sel}
+          onClose={()=>setSel(null)}
+          onUpdate={t=>{setTickets(p=>p.map(x=>x['Ticket-Nr.']===t['Ticket-Nr.']?t:x));setSel(t);}}
+        />
+      )}
+    </div>
+    </AppCtx.Provider>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
