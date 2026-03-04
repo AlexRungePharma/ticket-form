@@ -58,7 +58,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);overf
 .topbar{height:56px;background:var(--wh);border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 22px;gap:12px;flex-shrink:0}
 .tb-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--tx)}
 .tb-right{margin-left:auto;display:flex;gap:8px;align-items:center}
-.content{flex:1;overflow-y:auto;padding:22px}
+.content{flex:1;overflow-y:auto;padding:28px 32px}
 
 /* BUTTONS */
 .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border-radius:8px;font-size:13px;font-weight:600;border:none;cursor:pointer;transition:all .13s;font-family:inherit;white-space:nowrap}
@@ -74,7 +74,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);overf
 .btn-d:hover:not(:disabled){background:#fecaca;filter:none}
 
 /* FORM */
-.fw{max-width:680px;margin:0 auto}
+.fw{max-width:860px;margin:0 auto}
 .fsec{background:var(--wh);border:1px solid var(--bd);border-radius:var(--r);padding:22px;margin-bottom:14px}
 .fstitle{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--g);margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid var(--bd)}
 .ig{margin-bottom:16px}
@@ -1963,7 +1963,7 @@ function App() {
     <div className="app">
 
       {/* ── SIDEBAR ── */}
-      <div className="sb">
+      {user&&<div className="sb">
         <div className="sb-logo" onClick={()=>window.location.href='Startseite.html'} title="Zur Startseite">
           <img src="logo.png" alt="Logo" onError={e=>{e.target.style.display='none';e.target.nextSibling.style.display='flex';}}/>
           <div className="sb-logo-ico" style={{display:'none', width:40,height:40,background:'rgba(255,255,255,.1)',borderRadius:8,alignItems:'center',justifyContent:'center',fontSize:20,flexShrink:0}}>💊</div>
@@ -2028,13 +2028,13 @@ function App() {
             <div className="ni" onClick={()=>setShowLogin(true)}>🔑 IT-Login</div>
           )}
         </div>
-      </div>
+      </div>}
 
       {/* ── MAIN ── */}
       <div className="main">
         <div className="topbar">
           <div className="tb-title">
-            {view==='new'&&'📝 Ticket einreichen'}
+            {view==='new'&&'Runge Pharma Ticket System'}
             {view==='settings'&&'⚙️ Einstellungen'}
             {view==='mitarbeiter'&&'👥 Mitarbeiter & Status'}
             {VIEWS[view]&&VIEWS[view].label}
@@ -2066,43 +2066,9 @@ function App() {
         </div>
 
         <div className="content">
-          {view==='new'&&<PublicForm/>}
-          {view==='settings'&&user&&<SettingsPage user={user} onLogout={logout} showPw={()=>setShowPw(true)} isAdmin={isAdmin}/>}
-          {view==='mitarbeiter'&&user&&<MitarbeiterPage isAdmin={isAdmin}/>}
-
-          {user&&isITView&&loading&&(
-            <div className="empty"><div className="eico">⏳</div><h3>Lädt…</h3></div>
-          )}
-          {user&&isITView&&!loading&&fetchErr&&(
-            <div style={{background:'#fee2e2',color:'#991b1b',padding:'14px 18px',borderRadius:10,fontSize:13}}>
-              <strong>⚠️ Fehler:</strong> {fetchErr}
-            </div>
-          )}
-          {user&&isITView&&!loading&&!fetchErr&&(
-            mode==='table'
-              ?<TableView tickets={filtered} viewId={view} onSelect={setSel}/>
-              :<KanbanView tickets={filtered} onSelect={setSel} viewId={view}/>
-          )}
-          {!user&&isITView&&(
-            <div className="empty">
-              <div className="eico">🔒</div><h3>Anmeldung erforderlich</h3>
-              <p style={{fontSize:13}}>Das IT-Dashboard ist nur für autorisierte Mitarbeiter.</p>
-              <button className="btn btn-p" style={{marginTop:14}} onClick={()=>setShowLogin(true)}>🔑 Jetzt anmelden</button>
-            </div>
-          )}
+          <PublicForm/>
         </div>
       </div>
-
-      {/* ── MODALS ── */}
-      {showLogin&&<LoginModal onClose={()=>setShowLogin(false)}/>}
-      {showPw&&<PwModal onClose={()=>setShowPw(false)}/>}
-      {sel&&(
-        <DetailPanel
-          ticket={sel}
-          onClose={()=>setSel(null)}
-          onUpdate={t=>{setTickets(p=>p.map(x=>x['Ticket-Nr.']===t['Ticket-Nr.']?t:x));setSel(t);}}
-        />
-      )}
     </div>
     </AppCtx.Provider>
   );
