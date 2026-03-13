@@ -168,7 +168,7 @@ function PublicForm() {
     <div className="fw"><div className="success">
       <div style={{fontSize:40,marginBottom:14}}>✅</div>
       <h2>Ticket eingereicht!</h2>
-      <p>Wir haben Ihre Anfrage erhalten und werden uns schnellstmöglich darum kümmern.</p>
+      <p>Wir haben deine Anfrage erhalten und werden uns schnellstmöglich darum kümmern.</p>
       <button className="btn btn-p" onClick={()=>{setDone(false);setF(INIT);setFormErr('');}}>Weiteres Ticket einreichen</button>
     </div></div>
   );
@@ -181,12 +181,12 @@ function PublicForm() {
           {formErr && <div className="alert alert-e" style={{fontWeight:600}}>{formErr}</div>}
           <div className="dgrid">
             <div className="ig">
-              <label className="lbl">Ihr Name<span className="req">*</span></label>
+              <label className="lbl">Dein Name<span className="req">*</span></label>
               <input className="inp" required value={f.name} onChange={e=>setF(p=>({...p,name:e.target.value}))} placeholder="Max Mustermann"/>
             </div>
             <div className="ig">
               <label className="lbl">E-Mail<span className="req">*</span></label>
-              <input className="inp" required type="email" value={f.email} onChange={e=>setF(p=>({...p,email:e.target.value}))} placeholder="name@runge-pharma.de"/>
+              <input className="inp" required type="email" value={f.email} onChange={e=>setF(p=>({...p,email:e.target.value}))} placeholder="name@rungepharma.de"/>
             </div>
           </div>
           <div className="ig">
