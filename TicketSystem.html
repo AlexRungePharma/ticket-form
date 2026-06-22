@@ -1,341 +1,454 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Runge Pharma | IT Ticket System</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-:root{
-  --g:#7aa290;--gd:#5d8a78;--gl:#e8f0ed;
-  --tx:#1a2e35;--mu:#64748b;--bd:#e2e8f0;
-  --bg:#f4f7f6;--wh:#ffffff;
-  --r:10px;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;}
-::-webkit-scrollbar{width:5px}
-::-webkit-scrollbar-thumb{background:#c8d6d0;border-radius:4px}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Runge Pharma | IT Ticket System</title>
 
-.topbar{background:var(--wh);border-bottom:1px solid var(--bd);height:56px;display:flex;align-items:center;padding:0 28px;}
-.tb-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--tx);}
-.content{padding:28px 32px;}
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-.fw{max-width:860px;margin:0 auto;}
-.fsec{background:var(--wh);border:1px solid var(--bd);border-radius:var(--r);padding:22px;margin-bottom:14px;}
-.fstitle{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--g);margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid var(--bd);}
-.ig{margin-bottom:16px;}
-.ig:last-child{margin-bottom:0;}
-.lbl{display:block;font-size:12.5px;font-weight:600;color:var(--tx);margin-bottom:7px;}
-.req{color:#ef4444;margin-left:2px;}
-.inp{width:100%;padding:9px 13px;border:1.5px solid var(--bd);border-radius:8px;font-family:inherit;font-size:13.5px;background:var(--wh);color:var(--tx);transition:border-color .13s;outline:none;}
-.inp:focus{border-color:var(--g);}
-textarea.inp{min-height:90px;resize:vertical;}
-.rg,.cg{display:flex;flex-direction:column;gap:6px;}
-.rw,.cw{display:flex;align-items:center;gap:9px;cursor:pointer;padding:7px 11px;border-radius:8px;border:1.5px solid var(--bd);transition:all .13s;font-size:13.5px;}
-.rw:hover,.cw:hover{border-color:var(--g);background:var(--gl);}
-.rw.sel,.cw.sel{border-color:var(--g);background:var(--gl);font-weight:500;}
-.rw input,.cw input{accent-color:var(--g);width:15px;height:15px;flex-shrink:0;}
-.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-.pzone{border:2px dashed var(--bd);border-radius:10px;padding:22px;text-align:center;color:var(--mu);font-size:13px;transition:all .13s;background:var(--bg);cursor:pointer;}
-.pzone.has{border-color:var(--g);background:var(--gl);}
-.thumbs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px;}
-.tw{position:relative;}
-.th{width:76px;height:76px;object-fit:cover;border-radius:6px;border:1px solid var(--bd);}
-.trm{position:absolute;top:-5px;right:-5px;width:17px;height:17px;border-radius:50%;background:#ef4444;color:#fff;border:none;cursor:pointer;font-size:9px;display:flex;align-items:center;justify-content:center;}
-.addth{width:76px;height:76px;border:2px dashed var(--bd);border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--mu);font-size:22px;transition:all .13s;}
-.addth:hover{border-color:var(--g);color:var(--g);}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border-radius:8px;font-size:13px;font-weight:600;border:none;cursor:pointer;transition:all .13s;font-family:inherit;}
-.btn:hover:not(:disabled){filter:brightness(.95);transform:translateY(-1px);}
-.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
-.btn-p{background:var(--g);color:#fff;}
-.alert{padding:9px 13px;border-radius:8px;font-size:12.5px;margin-bottom:12px;}
-.alert-e{background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;}
-.success{display:flex;flex-direction:column;align-items:center;padding:60px 20px;text-align:center;}
-.success h2{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;margin:14px 0 8px;}
-.success p{color:var(--mu);font-size:13.5px;line-height:1.6;max-width:420px;margin-bottom:20px;}
-</style>
+  <style>
+    :root{
+      --g:#7aa290;--gd:#5d8a78;--gl:#e8f0ed;
+      --tx:#1a2e35;--mu:#64748b;--bd:#e2e8f0;
+      --bg:#f4f7f6;--wh:#ffffff;--r:10px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;}
+    .topbar{background:var(--wh);border-bottom:1px solid var(--bd);height:56px;display:flex;align-items:center;padding:0 28px;}
+    .tb-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;}
+    .content{padding:28px 32px;}
+    .fw{max-width:860px;margin:0 auto;}
+    .fsec{background:var(--wh);border:1px solid var(--bd);border-radius:var(--r);padding:22px;margin-bottom:14px;}
+    .fstitle{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--g);margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid var(--bd);}
+    .ig{margin-bottom:16px;}
+    .lbl{display:block;font-size:12.5px;font-weight:600;margin-bottom:7px;}
+    .req{color:#ef4444;margin-left:2px;}
+    .inp{width:100%;padding:9px 13px;border:1.5px solid var(--bd);border-radius:8px;font-family:inherit;font-size:13.5px;background:var(--wh);color:var(--tx);outline:none;}
+    .inp:focus{border-color:var(--g);}
+    textarea.inp{min-height:90px;resize:vertical;}
+    .rg,.cg{display:flex;flex-direction:column;gap:6px;}
+    .rw,.cw{display:flex;align-items:center;gap:9px;cursor:pointer;padding:7px 11px;border-radius:8px;border:1.5px solid var(--bd);font-size:13.5px;}
+    .rw:hover,.cw:hover{border-color:var(--g);background:var(--gl);}
+    .rw.sel,.cw.sel{border-color:var(--g);background:var(--gl);font-weight:500;}
+    input[type="radio"],input[type="checkbox"]{accent-color:var(--g);}
+    .dgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    .pzone{border:2px dashed var(--bd);border-radius:10px;padding:22px;text-align:center;color:var(--mu);font-size:13px;background:var(--bg);cursor:pointer;}
+    .pzone.has{border-color:var(--g);background:var(--gl);}
+    .file-list{margin-top:10px;font-size:12px;color:var(--tx);}
+    .file-item{background:white;border:1px solid var(--bd);padding:7px 10px;border-radius:7px;margin-top:6px;display:flex;justify-content:space-between;gap:10px;}
+    .remove{border:0;background:#ef4444;color:white;border-radius:5px;padding:2px 7px;cursor:pointer;}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border-radius:8px;font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:inherit;}
+    .btn:disabled{opacity:.5;cursor:not-allowed;}
+    .btn-p{background:var(--g);color:#fff;}
+    .alert{padding:9px 13px;border-radius:8px;font-size:12.5px;margin-bottom:12px;}
+    .alert-e{background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;}
+    .success{display:flex;flex-direction:column;align-items:center;padding:60px 20px;text-align:center;background:white;border:1px solid var(--bd);border-radius:var(--r);}
+    .success h2{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;margin:14px 0 8px;}
+    .success p{color:var(--mu);font-size:13.5px;line-height:1.6;max-width:420px;margin-bottom:20px;}
+    .hidden{display:none;}
+    @media(max-width:700px){.dgrid{grid-template-columns:1fr}.content{padding:18px}}
+  </style>
 </head>
+
 <body>
-<div id="root"></div>
-<script type="text/babel">
-const {useState, useEffect} = React;
+  <div class="topbar">
+    <div class="tb-title">Runge Pharma Ticket System</div>
+  </div>
 
-const SB_URL = 'https://kdbwpftahhkufzynmifd.supabase.co';
-const SB_KEY = 'sb_publishable_figCNfCQKXOVpPWXgAuMJA_DZ7lTiOq';
-const supabase = window.supabase.createClient(SB_URL, SB_KEY);
+  <div class="content">
+    <div class="fw" id="app">
+      <form id="ticketForm">
 
-const CATS     = ['Hardware','Software','Netzwerk / Internet','Drucker / Scanner','Telefon / Headset','E-Mail / Outlook','Benutzer / Passwort','Sonstiges'];
-const DEVS     = ['Laptop','Bildschirm','2 Bildschirme','Maus','Tastatur','Headset','Kamera','Kompletter Arbeitsplatz','Sonstiges'];
-const PURPOSES = ['Im Haus','Außendienst','Home Office','Sonstiges'];
-const REQS     = ['Verbesserungsvorschlag','Neue Software / Tool','Hardwarewunsch','Prozessänderung','Beschwerde','Sonstiges'];
-const AFFECTED = ['Nur ich','Meine Abteilung','Mehrere Abteilungen','Ganzes Unternehmen'];
-const SINCE    = ['Heute','Seit gestern','Seit einigen Tagen','Seit einer Woche','Schon länger'];
+        <div class="fsec">
+          <div class="fstitle">📝 Neues IT-Ticket</div>
 
-const genTicketNr = () => {
-  const d = new Date();
-  return `TK-${d.getFullYear().toString().slice(2)}${String(d.getMonth()+1).padStart(2,'0')}-${String(Math.floor(Math.random()*9000)+1000)}`;
-};
+          <div id="formErr" class="alert alert-e hidden"></div>
 
-async function uploadFiles(files) {
-  const urls = [];
-  for (const file of files) {
-    const ext = (file.name || 'png').split('.').pop();
-    const path = `${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
-    const {error} = await supabase.storage.from('ticket-files').upload(path, file);
-    if (!error) {
-      const {data} = supabase.storage.from('ticket-files').getPublicUrl(path);
-      urls.push(data.publicUrl);
-    }
-  }
-  return urls;
-}
-
-function PublicForm() {
-  const INIT = {titel:'',email:'',name:'',type:'',cat:'',desc:'',since:'',affected:'',devs:[],purpose:'',von:'',bis:'',reqtype:'',changeDesc:'',changeAff:'',imgs:[]};
-  const [f,setF]=useState(INIT);
-  const [loading,setL]=useState(false);
-  const [done,setDone]=useState(false);
-  const [formErr,setFormErr]=useState('');
-
-  useEffect(()=>{
-    const onPaste=ev=>{
-      const items=ev.clipboardData?.items||[]; const newImgs=[];
-      for(const item of items){ if(item.type.startsWith('image/')){const file=item.getAsFile();if(file)newImgs.push(file);} }
-      if(newImgs.length) setF(p=>({...p,imgs:[...p.imgs,...newImgs]}));
-    };
-    document.addEventListener('paste',onPaste);
-    return ()=>document.removeEventListener('paste',onPaste);
-  },[]);
-
-  const togDev=d=>setF(p=>({...p,devs:p.devs.includes(d)?p.devs.filter(x=>x!==d):[...p.devs,d]}));
-  const addImgs=files=>setF(p=>({...p,imgs:[...p.imgs,...Array.from(files)]}));
-  const rmImg=i=>setF(p=>({...p,imgs:p.imgs.filter((_,j)=>j!==i)}));
-
-  const submit=async ev=>{
-    ev.preventDefault(); setFormErr('');
-    if(f.type.includes('Technische Störung')) {
-      if(!f.cat) return setFormErr('Bitte wähle eine Kategorie aus.');
-      if(!f.since) return setFormErr('Bitte gib an, seit wann die Störung besteht.');
-      if(!f.affected) return setFormErr('Bitte wähle aus, wer betroffen ist.');
-    }
-    if(f.type.includes('Gerät ausleihen')) {
-      if(f.devs.length === 0) return setFormErr('Bitte wähle mindestens ein Gerät aus.');
-      if(!f.purpose) return setFormErr('Bitte gib den Zweck der Nutzung an.');
-      if(f.purpose !== 'Home Office') {
-        if(!f.von) return setFormErr('Bitte gib ein Startdatum (Von) an.');
-        if(!f.bis) return setFormErr('Bitte gib ein Enddatum (Bis) an.');
-      }
-    }
-    if(f.type.includes('Änderung')) {
-      if(!f.reqtype) return setFormErr('Bitte wähle die Art der Anfrage aus.');
-      if(!f.changeAff) return setFormErr('Bitte wähle aus, wer von der Änderung betroffen ist.');
-    }
-    setL(true);
-    const imgUrls = await uploadFiles(f.imgs);
-    const row={
-      'Ticket-Nr.':genTicketNr(),
-      'Ticket-Datum':new Date().toLocaleDateString('de-DE'),
-      'Ticket-Art':f.type,
-      'Name':f.name,
-      'Antragsteller':f.name,
-      'E-Mail':f.email,
-      'Titel':f.titel,
-      'Kategorie':f.cat,
-      'Status':'Offen',
-      'Priorität': null,
-      'Problembeschreibung':f.desc,
-      'Seit wann Problem?':f.since,
-      'Wer ist betroffen?':f.affected || f.changeAff,
-      'Gerätetyp (Mehrere Antworten möglich)':f.devs.join(', '),
-      'Zweck der Nutzung':f.purpose,
-      '(Von) Zeitraum':f.von,
-      '(Bis) Zeitraum':f.bis,
-      'Art der Anfrage':f.reqtype,
-      'Beschreibung':f.changeDesc,
-      'Anlagen-URLs':JSON.stringify(imgUrls),
-    };
-    const {error}=await supabase.from('tickets').insert(row);
-    setL(false);
-    if(!error) setDone(true);
-  };
-
-  if(done) return (
-    <div className="fw"><div className="success">
-      <div style={{fontSize:40,marginBottom:14}}>✅</div>
-      <h2>Ticket eingereicht!</h2>
-      <p>Wir haben deine Anfrage erhalten und werden uns schnellstmöglich darum kümmern.</p>
-      <button className="btn btn-p" onClick={()=>{setDone(false);setF(INIT);setFormErr('');}}>Weiteres Ticket einreichen</button>
-    </div></div>
-  );
-
-  return (
-    <div className="fw">
-      <form onSubmit={submit}>
-        <div className="fsec">
-          <div className="fstitle">📝 Neues IT-Ticket</div>
-          {formErr && <div className="alert alert-e" style={{fontWeight:600}}>{formErr}</div>}
-          <div className="dgrid">
-            <div className="ig">
-              <label className="lbl">Dein Name<span className="req">*</span></label>
-              <input className="inp" required value={f.name} onChange={e=>setF(p=>({...p,name:e.target.value}))} placeholder="Max Mustermann"/>
+          <div class="dgrid">
+            <div class="ig">
+              <label class="lbl">Dein Name<span class="req">*</span></label>
+              <input class="inp" id="name" required placeholder="Max Mustermann" />
             </div>
-            <div className="ig">
-              <label className="lbl">E-Mail<span className="req">*</span></label>
-              <input className="inp" required type="email" value={f.email} onChange={e=>setF(p=>({...p,email:e.target.value}))} placeholder="name@rungepharma.de"/>
+            <div class="ig">
+              <label class="lbl">E-Mail<span class="req">*</span></label>
+              <input class="inp" id="email" required type="email" placeholder="name@rungepharma.de" />
             </div>
           </div>
-          <div className="ig">
-            <label className="lbl">Kurztitel<span className="req">*</span></label>
-            <input className="inp" required value={f.titel} onChange={e=>setF(p=>({...p,titel:e.target.value}))} placeholder="Kurze Beschreibung des Problems"/>
+
+          <div class="ig">
+            <label class="lbl">Kurztitel<span class="req">*</span></label>
+            <input class="inp" id="titel" required placeholder="Kurze Beschreibung des Problems" />
           </div>
-          <div className="ig" style={{marginBottom:0}}>
-            <label className="lbl">Art des Anliegens<span className="req">*</span></label>
-            <div className="rg">
-              {[['🔧 Technische Störung','🔧 Technische Störung'],['💻 Gerät ausleihen / Wunsch','💻 Gerät ausleihen'],['💡 Änderung / Anfrage','💡 Änderung / Anfrage']].map(([lab,val])=>(
-                <label key={val} className={`rw${f.type===val?' sel':''}`}>
-                  <input type="radio" name="type" checked={f.type===val} onChange={()=>{setF(p=>({...p,type:val}));setFormErr('');}} /> {lab}
-                </label>
-              ))}
+
+          <div class="ig">
+            <label class="lbl">Art des Anliegens<span class="req">*</span></label>
+            <div class="rg">
+              <label class="rw"><input type="radio" name="type" value="🔧 Technische Störung" required /> 🔧 Technische Störung</label>
+              <label class="rw"><input type="radio" name="type" value="💻 Gerät ausleihen" /> 💻 Gerät ausleihen / Wunsch</label>
+              <label class="rw"><input type="radio" name="type" value="💡 Änderung / Anfrage" /> 💡 Änderung / Anfrage</label>
             </div>
           </div>
         </div>
 
-        {f.type.includes('Technische Störung')&&(
-          <div className="fsec">
-            <div className="fstitle">🔧 Störungsdetails</div>
-            <div className="ig">
-              <label className="lbl">Kategorie<span className="req">*</span></label>
-              <div className="rg">{CATS.map(c=><label key={c} className={`rw${f.cat===c?' sel':''}`}>
-                <input type="radio" name="cat" checked={f.cat===c} onChange={()=>setF(p=>({...p,cat:c}))}/> {c}
-              </label>)}</div>
+        <div id="stoerung" class="fsec hidden">
+          <div class="fstitle">🔧 Störungsdetails</div>
+
+          <div class="ig">
+            <label class="lbl">Kategorie<span class="req">*</span></label>
+            <div class="rg" id="cats"></div>
+          </div>
+
+          <div class="ig">
+            <label class="lbl">Problembeschreibung<span class="req">*</span></label>
+            <textarea class="inp" id="desc" placeholder="Bitte ausführlich beschreiben…"></textarea>
+          </div>
+
+          <div class="dgrid">
+            <div class="ig">
+              <label class="lbl">Seit wann?<span class="req">*</span></label>
+              <div class="rg" id="since"></div>
             </div>
-            <div className="ig">
-              <label className="lbl">Problembeschreibung<span className="req">*</span></label>
-              <textarea className="inp" required value={f.desc} onChange={e=>setF(p=>({...p,desc:e.target.value}))} placeholder="Bitte ausführlich beschreiben…"/>
-            </div>
-            <div className="dgrid">
-              <div className="ig">
-                <label className="lbl">Seit wann?<span className="req">*</span></label>
-                <div className="rg">{SINCE.map(s=><label key={s} className={`rw${f.since===s?' sel':''}`}>
-                  <input type="radio" name="since" checked={f.since===s} onChange={()=>setF(p=>({...p,since:s}))}/> {s}
-                </label>)}</div>
-              </div>
-              <div className="ig">
-                <label className="lbl">Wer ist betroffen?<span className="req">*</span></label>
-                <div className="rg">{AFFECTED.map(a=><label key={a} className={`rw${f.affected===a?' sel':''}`}>
-                  <input type="radio" name="aff" checked={f.affected===a} onChange={()=>setF(p=>({...p,affected:a}))}/> {a}
-                </label>)}</div>
-              </div>
+            <div class="ig">
+              <label class="lbl">Wer ist betroffen?<span class="req">*</span></label>
+              <div class="rg" id="affected"></div>
             </div>
           </div>
-        )}
+        </div>
 
-        {f.type.includes('Gerät ausleihen')&&(
-          <div className="fsec">
-            <div className="fstitle">💻 Gerätedetails</div>
-            <div className="ig">
-              <label className="lbl">Gewünschtes Gerät<span className="req">*</span></label>
-              <div className="cg">{DEVS.map(d=><label key={d} className={`cw${f.devs.includes(d)?' sel':''}`}>
-                <input type="checkbox" checked={f.devs.includes(d)} onChange={()=>togDev(d)}/> {d}
-              </label>)}</div>
+        <div id="geraet" class="fsec hidden">
+          <div class="fstitle">💻 Gerätedetails</div>
+
+          <div class="ig">
+            <label class="lbl">Gewünschtes Gerät<span class="req">*</span></label>
+            <div class="cg" id="devs"></div>
+          </div>
+
+          <div class="ig">
+            <label class="lbl">Zweck der Nutzung<span class="req">*</span></label>
+            <div class="rg" id="purposes"></div>
+          </div>
+
+          <div class="dgrid">
+            <div class="ig">
+              <label class="lbl">Von</label>
+              <input class="inp" type="date" id="von" />
             </div>
-            <div className="ig">
-              <label className="lbl">Zweck der Nutzung<span className="req">*</span></label>
-              <div className="rg">{PURPOSES.map(p=><label key={p} className={`rw${f.purpose===p?' sel':''}`}>
-                <input type="radio" name="pur" checked={f.purpose===p} onChange={()=>setF(pr=>({...pr,purpose:p}))}/> {p}
-              </label>)}</div>
-            </div>
-            <div className="dgrid">
-              <div className="ig">
-                <label className="lbl">Von{f.purpose!=='Home Office'&&<span className="req">*</span>}</label>
-                <input className="inp" type="date" value={f.von} onChange={e=>setF(p=>({...p,von:e.target.value}))}/>
-              </div>
-              <div className="ig">
-                <label className="lbl">Bis{f.purpose!=='Home Office'&&<span className="req">*</span>}</label>
-                <input className="inp" type="date" value={f.bis} onChange={e=>setF(p=>({...p,bis:e.target.value}))}/>
-              </div>
+            <div class="ig">
+              <label class="lbl">Bis</label>
+              <input class="inp" type="date" id="bis" />
             </div>
           </div>
-        )}
+        </div>
 
-        {f.type.includes('Änderung')&&(
-          <div className="fsec">
-            <div className="fstitle">💡 Anfrage-Details</div>
-            <div className="ig">
-              <label className="lbl">Art der Anfrage<span className="req">*</span></label>
-              <div className="rg">{REQS.map(r=><label key={r} className={`rw${f.reqtype===r?' sel':''}`}>
-                <input type="radio" name="req" checked={f.reqtype===r} onChange={()=>setF(p=>({...p,reqtype:r}))}/> {r}
-              </label>)}</div>
-            </div>
-            <div className="ig">
-              <label className="lbl">Beschreibung<span className="req">*</span></label>
-              <textarea className="inp" required value={f.changeDesc} onChange={e=>setF(p=>({...p,changeDesc:e.target.value}))} placeholder="Bitte ausführlich beschreiben…"/>
-            </div>
-            <div className="ig" style={{marginBottom:0}}>
-              <label className="lbl">Wer ist betroffen?<span className="req">*</span></label>
-              <div className="rg">{AFFECTED.map(a=><label key={a} className={`rw${f.changeAff===a?' sel':''}`}>
-                <input type="radio" name="caff" checked={f.changeAff===a} onChange={()=>setF(p=>({...p,changeAff:a}))}/> {a}
-              </label>)}</div>
-            </div>
+        <div id="change" class="fsec hidden">
+          <div class="fstitle">💡 Anfrage-Details</div>
+
+          <div class="ig">
+            <label class="lbl">Art der Anfrage<span class="req">*</span></label>
+            <div class="rg" id="reqs"></div>
           </div>
-        )}
 
-        {f.type&&(
-          <div className="fsec">
-            <div className="fstitle">📎 Screenshots / Anhänge (Optional)</div>
-            <div className={`pzone${f.imgs.length?' has':''}`}
-              onDragOver={e=>e.preventDefault()}
-              onDrop={e=>{e.preventDefault();const files=Array.from(e.dataTransfer.files).filter(fi=>fi.type.startsWith('image/'));if(files.length)addImgs(files);}}>
-              {f.imgs.length===0?(
-                <>
-                  <div style={{fontSize:28,marginBottom:8}}>📋</div>
-                  <div><strong>Strg+V</strong> für Screenshot einfügen</div>
-                  <div style={{fontSize:11.5,marginTop:5,opacity:.7}}>Oder Datei per Drag & Drop ablegen</div>
-                  <label style={{display:'inline-flex',alignItems:'center',gap:5,marginTop:12,cursor:'pointer',color:'var(--g)',fontWeight:600,fontSize:12.5}}>
-                    📁 Datei auswählen<input type="file" multiple accept="image/*,.pdf" style={{display:'none'}} onChange={e=>addImgs(e.target.files)}/>
-                  </label>
-                </>
-              ):(
-                <>
-                  <div className="thumbs">
-                    {f.imgs.map((img,i)=><div key={i} className="tw">
-                      <img src={URL.createObjectURL(img)} className="th" alt=""/>
-                      <button type="button" className="trm" onClick={()=>rmImg(i)}>✕</button>
-                    </div>)}
-                    <label className="addth" title="Weitere">+<input type="file" multiple accept="image/*" style={{display:'none'}} onChange={e=>addImgs(e.target.files)}/></label>
-                  </div>
-                  <div style={{fontSize:11.5,marginTop:8,opacity:.65}}>Strg+V für weitere Screenshots</div>
-                </>
-              )}
-            </div>
+          <div class="ig">
+            <label class="lbl">Beschreibung<span class="req">*</span></label>
+            <textarea class="inp" id="changeDesc" placeholder="Bitte ausführlich beschreiben…"></textarea>
           </div>
-        )}
 
-        {f.type&&(
-          <button type="submit" className="btn btn-p" style={{width:'100%',justifyContent:'center',padding:13,fontSize:14}} disabled={loading}>
-            {loading?'⏳ Wird gesendet…':'✉️ Ticket absenden'}
-          </button>
-        )}
+          <div class="ig">
+            <label class="lbl">Wer ist betroffen?<span class="req">*</span></label>
+            <div class="rg" id="changeAff"></div>
+          </div>
+        </div>
+
+        <div id="attachments" class="fsec hidden">
+          <div class="fstitle">📎 Screenshots / Anhänge optional</div>
+
+          <div class="pzone" id="dropzone">
+            <div style="font-size:28px;margin-bottom:8px">📋</div>
+            <div><strong>Strg+V</strong> für Screenshot einfügen</div>
+            <div style="font-size:11.5px;margin-top:5px;opacity:.7">Oder Datei auswählen / Drag & Drop</div>
+
+            <label style="display:inline-flex;align-items:center;gap:5px;margin-top:12px;cursor:pointer;color:var(--g);font-weight:600;font-size:12.5px;">
+              📁 Datei auswählen
+              <input id="fileInput" type="file" multiple accept="image/*,.pdf" style="display:none" />
+            </label>
+
+            <div class="file-list" id="fileList"></div>
+          </div>
+        </div>
+
+        <button id="submitBtn" type="submit" class="btn btn-p hidden" style="width:100%;justify-content:center;padding:13px;font-size:14px;">
+          ✉️ Ticket absenden
+        </button>
+
       </form>
     </div>
-  );
-}
+  </div>
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <>
-    <div className="topbar">
-      <div className="tb-title">Runge Pharma Ticket System</div>
-    </div>
-    <div className="content">
-      <PublicForm/>
-    </div>
-  </>
-);
-</script>
+  <script>
+    const SB_URL = "https://kdbwpftahhkufzynmifd.supabase.co";
+    const SB_KEY = "sb_publishable_figCNfCQKXOVpPWXgAuMJA_DZ7lTiOq";
+    const supabaseClient = window.supabase.createClient(SB_URL, SB_KEY);
+
+    const CATS = ["Hardware","Software","Netzwerk / Internet","Drucker / Scanner","Telefon / Headset","E-Mail / Outlook","Benutzer / Passwort","Sonstiges"];
+    const DEVS = ["Laptop","Bildschirm","2 Bildschirme","Maus","Tastatur","Headset","Kamera","Kompletter Arbeitsplatz","Sonstiges"];
+    const PURPOSES = ["Im Haus","Außendienst","Home Office","Sonstiges"];
+    const REQS = ["Verbesserungsvorschlag","Neue Software / Tool","Hardwarewunsch","Prozessänderung","Beschwerde","Sonstiges"];
+    const AFFECTED = ["Nur ich","Meine Abteilung","Mehrere Abteilungen","Ganzes Unternehmen"];
+    const SINCE = ["Heute","Seit gestern","Seit einigen Tagen","Seit einer Woche","Schon länger"];
+
+    let files = [];
+
+    function $(id) {
+      return document.getElementById(id);
+    }
+
+    function getRadio(name) {
+      return document.querySelector(`input[name="${name}"]:checked`)?.value || "";
+    }
+
+    function getChecks(name) {
+      return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(x => x.value);
+    }
+
+    function showError(msg) {
+      $("formErr").textContent = msg;
+      $("formErr").classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function clearError() {
+      $("formErr").textContent = "";
+      $("formErr").classList.add("hidden");
+    }
+
+    function renderOptions(containerId, arr, name, type = "radio") {
+      const el = $(containerId);
+      el.innerHTML = arr.map(v => `
+        <label class="${type === "checkbox" ? "cw" : "rw"}">
+          <input type="${type}" name="${name}" value="${v}" /> ${v}
+        </label>
+      `).join("");
+    }
+
+    function refreshSelectedStyles() {
+      document.querySelectorAll(".rw,.cw").forEach(label => {
+        const input = label.querySelector("input");
+        label.classList.toggle("sel", input.checked);
+      });
+    }
+
+    function genTicketNr() {
+      const d = new Date();
+      return `TK-${d.getFullYear().toString().slice(2)}${String(d.getMonth()+1).padStart(2,"0")}-${String(Math.floor(Math.random()*9000)+1000)}`;
+    }
+
+    function renderFileList() {
+      $("fileList").innerHTML = files.map((file, i) => `
+        <div class="file-item">
+          <span>${file.name}</span>
+          <button type="button" class="remove" onclick="removeFile(${i})">x</button>
+        </div>
+      `).join("");
+
+      $("dropzone").classList.toggle("has", files.length > 0);
+    }
+
+    window.removeFile = function(i) {
+      files.splice(i, 1);
+      renderFileList();
+    };
+
+    function addFiles(newFiles) {
+      files.push(...Array.from(newFiles));
+      renderFileList();
+    }
+
+    async function uploadFiles() {
+      const urls = [];
+
+      for (const file of files) {
+        const ext = (file.name || "file").split(".").pop();
+        const path = `${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+
+        const { error } = await supabaseClient.storage
+          .from("ticket-files")
+          .upload(path, file);
+
+        if (error) {
+          throw new Error("Upload fehlgeschlagen: " + error.message);
+        }
+
+        const { data } = supabaseClient.storage
+          .from("ticket-files")
+          .getPublicUrl(path);
+
+        urls.push(data.publicUrl);
+      }
+
+      return urls;
+    }
+
+    function resetForm() {
+      location.reload();
+    }
+
+    function showSuccess() {
+      $("app").innerHTML = `
+        <div class="success">
+          <div style="font-size:40px;margin-bottom:14px">✅</div>
+          <h2>Ticket eingereicht!</h2>
+          <p>Wir haben deine Anfrage erhalten und werden uns schnellstmöglich darum kümmern.</p>
+          <button class="btn btn-p" onclick="location.reload()">Weiteres Ticket einreichen</button>
+        </div>
+      `;
+    }
+
+    renderOptions("cats", CATS, "cat");
+    renderOptions("since", SINCE, "since");
+    renderOptions("affected", AFFECTED, "affected");
+    renderOptions("devs", DEVS, "devs", "checkbox");
+    renderOptions("purposes", PURPOSES, "purpose");
+    renderOptions("reqs", REQS, "reqtype");
+    renderOptions("changeAff", AFFECTED, "changeAff");
+
+    document.addEventListener("change", e => {
+      if (e.target.matches("input")) {
+        refreshSelectedStyles();
+      }
+
+      const type = getRadio("type");
+
+      $("stoerung").classList.toggle("hidden", type !== "🔧 Technische Störung");
+      $("geraet").classList.toggle("hidden", type !== "💻 Gerät ausleihen");
+      $("change").classList.toggle("hidden", type !== "💡 Änderung / Anfrage");
+      $("attachments").classList.toggle("hidden", !type);
+      $("submitBtn").classList.toggle("hidden", !type);
+
+      clearError();
+    });
+
+    $("fileInput").addEventListener("change", e => {
+      addFiles(e.target.files);
+    });
+
+    $("dropzone").addEventListener("dragover", e => {
+      e.preventDefault();
+    });
+
+    $("dropzone").addEventListener("drop", e => {
+      e.preventDefault();
+      addFiles(e.dataTransfer.files);
+    });
+
+    document.addEventListener("paste", e => {
+      const pasted = [];
+      for (const item of e.clipboardData?.items || []) {
+        if (item.type.startsWith("image/")) {
+          const file = item.getAsFile();
+          if (file) pasted.push(file);
+        }
+      }
+      if (pasted.length) addFiles(pasted);
+    });
+
+    $("ticketForm").addEventListener("submit", async e => {
+      e.preventDefault();
+      clearError();
+
+      const type = getRadio("type");
+
+      const name = $("name").value.trim();
+      const email = $("email").value.trim();
+      const titel = $("titel").value.trim();
+
+      const cat = getRadio("cat");
+      const desc = $("desc").value.trim();
+      const since = getRadio("since");
+      const affected = getRadio("affected");
+
+      const devs = getChecks("devs");
+      const purpose = getRadio("purpose");
+      const von = $("von").value;
+      const bis = $("bis").value;
+
+      const reqtype = getRadio("reqtype");
+      const changeDesc = $("changeDesc").value.trim();
+      const changeAff = getRadio("changeAff");
+
+      if (!name || !email || !titel || !type) {
+        return showError("Bitte fülle alle Pflichtfelder aus.");
+      }
+
+      if (type === "🔧 Technische Störung") {
+        if (!cat) return showError("Bitte wähle eine Kategorie aus.");
+        if (!desc) return showError("Bitte beschreibe das Problem.");
+        if (!since) return showError("Bitte gib an, seit wann die Störung besteht.");
+        if (!affected) return showError("Bitte wähle aus, wer betroffen ist.");
+      }
+
+      if (type === "💻 Gerät ausleihen") {
+        if (devs.length === 0) return showError("Bitte wähle mindestens ein Gerät aus.");
+        if (!purpose) return showError("Bitte gib den Zweck der Nutzung an.");
+        if (purpose !== "Home Office") {
+          if (!von) return showError("Bitte gib ein Startdatum an.");
+          if (!bis) return showError("Bitte gib ein Enddatum an.");
+        }
+      }
+
+      if (type === "💡 Änderung / Anfrage") {
+        if (!reqtype) return showError("Bitte wähle die Art der Anfrage aus.");
+        if (!changeDesc) return showError("Bitte beschreibe die Anfrage.");
+        if (!changeAff) return showError("Bitte wähle aus, wer betroffen ist.");
+      }
+
+      $("submitBtn").disabled = true;
+      $("submitBtn").textContent = "⏳ Wird gesendet…";
+
+      try {
+        const imgUrls = await uploadFiles();
+
+        const row = {
+          "Ticket-Nr.": genTicketNr(),
+          "Ticket-Datum": new Date().toLocaleDateString("de-DE"),
+          "Ticket-Art": type,
+          "Name": name,
+          "Antragsteller": name,
+          "E-Mail": email,
+          "Titel": titel,
+          "Kategorie": cat,
+          "Status": "Offen",
+          "Priorität": null,
+          "Problembeschreibung": desc,
+          "Seit wann Problem?": since,
+          "Wer ist betroffen?": affected || changeAff,
+          "Gerätetyp (Mehrere Antworten möglich)": devs.join(", "),
+          "Zweck der Nutzung": purpose,
+          "(Von) Zeitraum": von,
+          "(Bis) Zeitraum": bis,
+          "Art der Anfrage": reqtype,
+          "Beschreibung": changeDesc,
+          "Anlagen-URLs": JSON.stringify(imgUrls)
+        };
+
+        const { error } = await supabaseClient
+          .from("tickets")
+          .insert(row);
+
+        if (error) {
+          throw new Error(error.message);
+        }
+
+        showSuccess();
+
+      } catch (err) {
+        showError("Ticket konnte nicht gespeichert werden: " + err.message);
+        $("submitBtn").disabled = false;
+        $("submitBtn").textContent = "✉️ Ticket absenden";
+        console.error(err);
+      }
+    });
+  </script>
 </body>
 </html>
